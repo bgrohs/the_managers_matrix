@@ -1,1 +1,2398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>The Manager&#39;s Matrix — A leadership podcast by Bernhard Grohs</title>
+<meta name="description" content="The Manager&#39;s Matrix is a leadership podcast built around short, focused knowledge pieces on the challenges modern leaders face every day. Created and produced by Bernhard Grohs, each episode is narrated by Björn Grosso, an AI voice delivering thought-provoking strategies with warm, cinematic storytelling."/>
+<meta property="og:title" content="The Manager&#39;s Matrix — A leadership podcast by Bernhard Grohs"/>
+<meta property="og:description" content="The Manager&#39;s Matrix is a leadership podcast built around short, focused knowledge pieces on the challenges modern leaders face every day. Created and produced by Bernhard Grohs, each episode is narrated by Björn Grosso, an AI voice delivering thought-provoking strategies with warm, cinematic storytelling."/>
+<meta property="og:type" content="website"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2028%2028'%3E%3Crect%20width%3D'28'%20height%3D'28'%20fill%3D'%25230F2547'%2F%3E%3Crect%20x%3D'0.5'%20y%3D'0.5'%20width%3D'27'%20height%3D'27'%20fill%3D'none'%20stroke%3D'%252382B8E8'%20stroke-opacity%3D'0.6'%2F%3E%3Cline%20x1%3D'14'%20y1%3D'0'%20x2%3D'14'%20y2%3D'28'%20stroke%3D'%252382B8E8'%20stroke-opacity%3D'0.4'%2F%3E%3Cline%20x1%3D'0'%20y1%3D'14'%20x2%3D'28'%20y2%3D'14'%20stroke%3D'%252382B8E8'%20stroke-opacity%3D'0.4'%2F%3E%3Crect%20x%3D'14'%20y%3D'0'%20width%3D'14'%20height%3D'14'%20fill%3D'%252382B8E8'%2F%3E%3C%2Fsvg%3E"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy-1:   #0A1A33;   /* deepest */
+  --navy-2:   #0F2547;   /* base bg */
+  --navy-3:   #163056;   /* cards / hover */
+  --navy-4:   #1E3D6A;   /* borders */
+  --grid:     rgba(255,255,255,0.045);
+  --grid-2:   rgba(255,255,255,0.09);
+  --ink:      #FFFFFF;
+  --ink-2:    #B8C5DA;
+  --ink-3:    #6F84A8;
+  --accent:   #82B8E8;   /* light-blue from cover */
+  --accent-2: #5A93C8;
+  --signal:   #FF6B5C;   /* the "ON AIR" dot only */
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--navy-2);color:var(--ink);}
+body{
+  font-family:'Archivo',system-ui,sans-serif;
+  font-weight:400;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+  min-height:100vh;
+  position:relative;
+}
+
+/* blueprint grid background — the literal "matrix" */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background-image:
+    linear-gradient(to right, var(--grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 100% 80% at 50% 30%, black 40%, transparent 95%);
+}
+/* faint circles like the cover */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background-image:
+    radial-gradient(circle at 85% 18%, transparent 280px, rgba(130,184,232,0.05) 281px, transparent 282px),
+    radial-gradient(circle at 12% 78%, transparent 220px, rgba(130,184,232,0.05) 221px, transparent 222px);
+}
+main, header, footer { position:relative; z-index:1; }
+
+::selection{background:var(--accent);color:var(--navy-1);}
+
+a{color:inherit;text-decoration:none;}
+
+/* layout */
+.frame{
+  max-width:1320px;
+  margin:0 auto;
+  padding:0 36px;
+  position:relative;
+}
+
+/* mono label */
+.mono{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+}
+
+/* ---------- nav ---------- */
+.nav{
+  border-bottom:1px solid var(--navy-4);
+  background:rgba(10,26,51,0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  position:sticky;
+  top:0;
+  z-index:40;
+}
+.nav .frame{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  height:64px;
+  gap:24px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  color:var(--ink);
+}
+.brand .mark{
+  width:28px;height:28px;
+  flex-shrink:0;
+}
+.brand .lockup{
+  font-family:'Archivo',sans-serif;
+  font-weight:900;
+  font-size:13px;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  line-height:1;
+}
+.brand .lockup span{color:var(--accent);}
+
+.nav-links{
+  display:flex;
+  gap:36px;
+  align-items:center;
+}
+.nav-links a{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--ink-2);
+  transition:color .2s ease;
+  position:relative;
+  padding:6px 0;
+}
+.nav-links a:hover, .nav-links a[aria-current="page"]{color:var(--ink);}
+.nav-links a[aria-current="page"]::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:-1px;
+  height:2px;
+  background:var(--accent);
+}
+.nav-cta{
+  font-family:'Archivo',sans-serif;
+  font-weight:700;
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  background:var(--accent);
+  color:var(--navy-1);
+  padding:11px 18px;
+  border-radius:2px;
+  transition:background .2s ease;
+}
+.nav-cta:hover{background:#A6CBF0;}
+
+/* ---------- hero ---------- */
+.hero{
+  padding:88px 0 96px;
+  border-bottom:1px solid var(--navy-4);
+  position:relative;
+}
+.hero-eyebrow{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  margin-bottom:64px;
+}
+.hero-eyebrow .left{display:flex;gap:32px;}
+
+.h1-lockup{
+  font-family:'Archivo',sans-serif;
+  font-weight:900;
+  text-transform:uppercase;
+  font-size:clamp(56px, 11vw, 168px);
+  line-height:.86;
+  letter-spacing:-.025em;
+  color:var(--ink);
+}
+.h1-lockup .small{
+  display:block;
+  font-size:.36em;
+  letter-spacing:.04em;
+  margin-bottom:.18em;
+  font-weight:700;
+  color:var(--ink-2);
+}
+.h1-lockup .matrix{
+  color:var(--accent);
+  display:block;
+}
+
+.hero-rule{
+  width:140px;
+  height:3px;
+  background:var(--accent);
+  margin:48px 0 36px;
+}
+
+.hero-tagline{
+  font-family:'Archivo',sans-serif;
+  font-weight:400;
+  font-size:clamp(18px, 1.6vw, 22px);
+  line-height:1.45;
+  color:var(--ink-2);
+  max-width:680px;
+}
+.hero-tagline strong{color:var(--ink);font-weight:600;}
+
+.hero-meta{
+  margin-top:56px;
+  display:flex;
+  gap:48px;
+  flex-wrap:wrap;
+  padding-top:28px;
+  border-top:1px solid var(--navy-4);
+}
+.hero-meta .stat .num{
+  font-family:'Archivo',sans-serif;
+  font-weight:900;
+  font-size:36px;
+  line-height:1;
+  color:var(--accent);
+  letter-spacing:-.02em;
+}
+.hero-meta .stat .lbl{
+  margin-top:8px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+}
+
+/* latest episode CTA card */
+.latest{
+  margin-top:72px;
+  border:1px solid var(--navy-4);
+  background:linear-gradient(180deg, rgba(22,48,86,0.6), rgba(15,37,71,0.4));
+  padding:32px 36px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:32px;
+  align-items:center;
+}
+.latest .l-eyebrow{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--accent);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px;
+}
+.latest .l-eyebrow::before{
+  content:"";
+  display:inline-block;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--signal);
+  box-shadow:0 0 0 0 rgba(255,107,92,.55);
+  animation:pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,107,92,.55);}
+  60%{box-shadow:0 0 0 10px rgba(255,107,92,0);}
+}
+.latest .l-title{
+  font-family:'Archivo',sans-serif;
+  font-weight:800;
+  font-size:24px;
+  line-height:1.18;
+  letter-spacing:-.01em;
+  color:var(--ink);
+  margin-bottom:8px;
+}
+.latest .l-meta{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+}
+.latest .play-cta{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  background:var(--accent);
+  color:var(--navy-1);
+  padding:14px 22px;
+  border-radius:2px;
+  font-family:'Archivo',sans-serif;
+  font-weight:800;
+  font-size:12px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  border:none;
+  cursor:pointer;
+  transition:background .2s ease, transform .2s ease;
+  white-space:nowrap;
+}
+.latest .play-cta:hover{background:#A6CBF0;transform:translateY(-1px);}
+.latest .play-cta .tri{
+  width:0;height:0;
+  border-left:9px solid var(--navy-1);
+  border-top:6px solid transparent;
+  border-bottom:6px solid transparent;
+}
+
+/* ---------- section heads ---------- */
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  border-bottom:1px solid var(--navy-4);
+  padding-bottom:20px;
+}
+.section-title{
+  font-family:'Archivo',sans-serif;
+  font-weight:900;
+  text-transform:uppercase;
+  font-size:34px;
+  letter-spacing:-.01em;
+  line-height:1;
+}
+.section-title span{color:var(--accent);}
+
+/* ---------- archive ---------- */
+.archive{padding:96px 0;border-bottom:1px solid var(--navy-4);}
+
+/* season picker (sits in the section head) */
+.season-picker{
+  display:inline-flex;
+  align-items:center;
+  gap:14px;
+}
+.season-picker .picker-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+}
+.season-select{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+}
+.season-select select{
+  appearance:none;
+  -webkit-appearance:none;
+  background:transparent;
+  border:1px solid var(--navy-4);
+  color:var(--ink);
+  font-family:'Archivo',sans-serif;
+  font-weight:800;
+  font-size:14px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  padding:10px 38px 10px 16px;
+  border-radius:2px;
+  cursor:pointer;
+  outline:none;
+  transition:border-color .2s ease, background .2s ease;
+}
+.season-select select:hover{border-color:var(--accent);background:rgba(22,48,86,0.45);}
+.season-select select:focus{border-color:var(--accent);}
+.season-select select option{
+  background:var(--navy-1);
+  color:var(--ink);
+  font-weight:700;
+}
+.season-select .chev{
+  position:absolute;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  pointer-events:none;
+  width:10px;height:6px;
+  display:block;
+}
+.season-select .chev::after{
+  content:"";
+  display:block;
+  width:0;height:0;
+  border-left:5px solid transparent;
+  border-right:5px solid transparent;
+  border-top:6px solid var(--accent);
+}
+
+/* season group header (above the list, inside each group) */
+.season-group{display:none;}
+.season-group.is-active{display:block;}
+.season-group .sg-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  padding:28px 8px 18px;
+  margin-bottom:0;
+}
+.season-group .sg-num{
+  font-family:'Archivo',sans-serif;
+  font-weight:900;
+  font-size:48px;
+  line-height:1;
+  letter-spacing:-.02em;
+  color:var(--accent);
+}
+.season-group .sg-num small{
+  display:inline-block;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:.16em;
+  color:var(--ink-3);
+  margin-right:14px;
+  font-weight:500;
+  vertical-align:6px;
+}
+.season-group .sg-meta{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+  text-align:right;
+  line-height:1.7;
+}
+.season-group .sg-meta .strong{color:var(--ink);}
+
+.ep-list{margin-top:8px;}
+.ep{
+  display:grid;
+  grid-template-columns:78px 1fr 140px 58px;
+  gap:24px;
+  padding:24px 0;
+  border-bottom:1px solid var(--navy-4);
+  align-items:start;
+  transition:background .25s ease;
+  position:relative;
+}
+.ep:hover{background:rgba(22,48,86,0.35);}
+.ep .ep-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  letter-spacing:.04em;
+  color:var(--ink-3);
+  padding-top:6px;
+  padding-left:8px;
+}
+.ep .ep-num strong{color:var(--accent);font-weight:500;}
+.ep .ep-body{padding-right:8px;min-width:0;}
+.ep .ep-title{
+  font-family:'Archivo',sans-serif;
+  font-weight:700;
+  font-size:19px;
+  line-height:1.3;
+  letter-spacing:-.005em;
+  color:var(--ink);
+  margin-bottom:8px;
+}
+.ep .ep-desc{
+  font-size:14px;
+  line-height:1.55;
+  color:var(--ink-2);
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.ep .ep-meta{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+  text-align:right;
+  padding-top:8px;
+  line-height:1.8;
+}
+.ep .ep-meta .dur{color:var(--ink-2);display:block;}
+.ep .ep-play{
+  width:44px;height:44px;
+  border-radius:50%;
+  background:transparent;
+  border:1px solid var(--accent);
+  color:var(--accent);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:background .2s ease, color .2s ease, transform .2s ease;
+  margin-top:4px;
+}
+.ep .ep-play:hover{background:var(--accent);color:var(--navy-1);transform:scale(1.06);}
+.ep .ep-play.playing{background:var(--accent);color:var(--navy-1);}
+.ep .ep-play .ic-play{
+  width:0;height:0;
+  border-left:10px solid currentColor;
+  border-top:6px solid transparent;
+  border-bottom:6px solid transparent;
+  margin-left:3px;
+}
+.ep .ep-play .ic-pause{display:none;width:11px;height:13px;position:relative;}
+.ep .ep-play .ic-pause::before,.ep .ep-play .ic-pause::after{
+  content:"";position:absolute;top:0;bottom:0;width:3.5px;background:currentColor;
+}
+.ep .ep-play .ic-pause::before{left:0;} .ep .ep-play .ic-pause::after{right:0;}
+.ep .ep-play.playing .ic-play{display:none;}
+.ep .ep-play.playing .ic-pause{display:block;}
+
+/* expanded player row */
+.ep-player{
+  grid-column:1 / -1;
+  display:none;
+  margin-top:18px;
+  padding:18px 8px 6px;
+  border-top:1px dashed var(--navy-4);
+}
+.ep.is-open .ep-player{display:grid;grid-template-columns:1fr 64px;gap:18px;align-items:center;}
+.scrub{height:4px;background:var(--navy-4);position:relative;cursor:pointer;}
+.scrub-fill{height:100%;background:var(--accent);width:0;transition:width .1s linear;position:relative;}
+.scrub-fill::after{
+  content:"";position:absolute;right:-6px;top:50%;transform:translateY(-50%);
+  width:12px;height:12px;background:var(--accent);border-radius:50%;
+  opacity:0;transition:opacity .2s;
+}
+.scrub:hover .scrub-fill::after,.ep.is-open.is-playing .scrub-fill::after{opacity:1;}
+.ep-player .time{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink-2);
+  text-align:right;
+  letter-spacing:.04em;
+}
+
+/* ---------- subscribe ---------- */
+.subscribe{padding:96px 0;border-bottom:1px solid var(--navy-4);}
+.sub-grid{
+  display:grid;
+  grid-template-columns:1.2fr 1fr;
+  gap:64px;
+  align-items:end;
+  border-bottom:1px solid var(--navy-4);
+  padding-bottom:24px;
+}
+.sub-title{
+  font-family:'Archivo',sans-serif;
+  font-weight:900;
+  text-transform:uppercase;
+  font-size:clamp(48px,6.4vw,80px);
+  line-height:.92;
+  letter-spacing:-.025em;
+}
+.sub-title span{color:var(--accent);}
+.sub-blurb{
+  font-size:15px;
+  line-height:1.55;
+  color:var(--ink-2);
+  max-width:380px;
+  justify-self:end;
+}
+.sub-list{margin-top:8px;}
+.sub-link{
+  display:grid;
+  grid-template-columns:48px 1fr 2fr auto;
+  gap:24px;
+  padding:24px 0;
+  border-bottom:1px solid var(--navy-4);
+  align-items:center;
+  transition:background .25s ease, padding .25s ease;
+}
+.sub-link:hover{background:rgba(22,48,86,0.45);padding-left:18px;padding-right:18px;}
+.sub-link .sl-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-3);letter-spacing:.1em;}
+.sub-link .sl-name{
+  font-family:'Archivo',sans-serif;
+  font-weight:800;
+  text-transform:uppercase;
+  font-size:22px;
+  letter-spacing:.005em;
+  color:var(--ink);
+  line-height:1;
+}
+.sub-link .sl-desc{font-size:14px;color:var(--ink-2);line-height:1.5;}
+.sub-link .sl-arrow{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
+  transition:transform .25s ease, color .25s ease;
+}
+.sub-link:hover .sl-arrow{transform:translateX(6px);color:var(--accent);}
+
+/* ---------- about page specific ---------- */
+.about-hero{padding:96px 0 72px;border-bottom:1px solid var(--navy-4);}
+.about-hero .h1-lockup{font-size:clamp(64px,12vw,180px);}
+
+.about-grid{
+  padding:96px 0;
+  border-bottom:1px solid var(--navy-4);
+}
+.about-grid > .frame{
+  display:grid;
+  grid-template-columns:minmax(280px, 5fr) minmax(0, 7fr);
+  gap:80px;
+  align-items:start;
+}
+.about-grid .col-side{position:sticky;top:96px;align-self:start;}
+.about-grid .col-main{min-width:0;}
+.about-grid h2{
+  font-family:'Archivo',sans-serif;
+  font-weight:900;
+  text-transform:uppercase;
+  font-size:42px;
+  line-height:1;
+  letter-spacing:-.015em;
+  margin-bottom:36px;
+}
+.about-grid h2 span{color:var(--accent);}
+.about-grid h3{
+  font-family:'Archivo',sans-serif;
+  font-weight:800;
+  text-transform:uppercase;
+  font-size:14px;
+  letter-spacing:.16em;
+  color:var(--accent);
+  margin:48px 0 16px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--navy-4);
+}
+.about-grid h3:first-child{margin-top:0;}
+.about-grid p{
+  font-size:17px;
+  line-height:1.7;
+  color:var(--ink-2);
+  margin-bottom:18px;
+  max-width:62ch;
+}
+.about-grid p strong{color:var(--ink);font-weight:600;}
+.about-grid .pull-quote{
+  font-family:'Archivo',sans-serif;
+  font-weight:800;
+  font-size:30px;
+  line-height:1.15;
+  letter-spacing:-.01em;
+  color:var(--ink);
+  border-left:3px solid var(--accent);
+  padding:8px 0 8px 24px;
+  margin:32px 0;
+  max-width:560px;
+}
+
+.cover-card{
+  aspect-ratio:1/1;
+  background:var(--navy-1);
+  border:1px solid var(--navy-4);
+  position:relative;
+  overflow:hidden;
+  padding:36px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+}
+.cover-card::before{
+  content:"";position:absolute;inset:0;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events:none;
+}
+.cover-card::after{
+  content:"";position:absolute;
+  width:260px;height:260px;border-radius:50%;
+  border:1px solid rgba(130,184,232,0.15);
+  top:-60px;right:-80px;
+}
+.cover-card .cc-circle-2{
+  position:absolute;
+  width:200px;height:200px;border-radius:50%;
+  border:1px solid rgba(130,184,232,0.15);
+  bottom:-60px;left:-50px;
+}
+.cover-card .cc-lockup{
+  font-family:'Archivo',sans-serif;
+  font-weight:900;
+  text-transform:uppercase;
+  font-size:46px;
+  line-height:.88;
+  letter-spacing:-.025em;
+  position:relative;
+}
+.cover-card .cc-lockup .small{
+  display:block;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:.06em;
+  color:var(--ink-2);
+  margin-bottom:8px;
+}
+.cover-card .cc-lockup .matrix{color:var(--accent);display:block;}
+.cover-card .cc-rule{
+  width:80px;height:2px;background:var(--accent);
+  margin:24px 0 16px;
+  position:relative;
+}
+.cover-card .cc-by{
+  font-family:'Archivo',sans-serif;
+  font-weight:700;
+  text-transform:uppercase;
+  font-size:12px;
+  letter-spacing:.18em;
+  color:var(--ink-2);
+  position:relative;
+}
+.side-meta{
+  margin-top:28px;
+}
+.side-meta dl{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:14px 24px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.side-meta dt{color:var(--ink-3);}
+.side-meta dd{color:var(--ink);}
+
+/* ---------- footer ---------- */
+footer{
+  padding:64px 0 80px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+  line-height:1.85;
+}
+footer .frame{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:48px;
+  align-items:start;
+}
+footer .ft-brand .ft-mark{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:16px;
+}
+footer .ft-brand .ft-mark .lockup{
+  font-family:'Archivo',sans-serif;
+  font-weight:900;
+  font-size:12px;
+  letter-spacing:.06em;
+  color:var(--ink);
+}
+footer .ft-brand .ft-mark .lockup span{color:var(--accent);}
+footer .ft-brand p{color:var(--ink-3);text-transform:none;letter-spacing:.04em;font-size:12px;line-height:1.6;max-width:320px;}
+footer .col-title{color:var(--ink);margin-bottom:14px;font-weight:500;}
+footer a{
+  color:var(--ink-3);
+  border-bottom:1px solid transparent;
+  padding-bottom:1px;
+  transition:color .2s ease,border-color .2s ease;
+}
+footer a:hover{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* ---------- responsive ---------- */
+@media (max-width:1000px){
+  .about-grid{padding:64px 0;}
+  .about-grid > .frame{grid-template-columns:1fr;gap:48px;}
+  .about-grid .col-side{position:static;}
+  .cover-card{max-width:480px;}
+  footer .frame{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:760px){
+  .frame{padding:0 22px;}
+  .nav .frame{height:56px;}
+  .nav-links{gap:20px;}
+  .nav-links a{font-size:10px;letter-spacing:.12em;}
+  .nav-cta{padding:9px 13px;}
+  .hero{padding:56px 0 64px;}
+  .hero-eyebrow{margin-bottom:36px;flex-wrap:wrap;gap:12px;}
+  .hero-eyebrow .left{gap:18px;}
+  .h1-lockup{font-size:clamp(44px,14vw,84px);}
+  .hero-rule{margin:32px 0 24px;}
+  .hero-meta{gap:32px;margin-top:36px;}
+  .hero-meta .stat .num{font-size:28px;}
+  .latest{grid-template-columns:1fr;gap:20px;padding:24px;}
+  .latest .play-cta{justify-self:start;}
+  .archive,.subscribe{padding:64px 0;}
+  .ep{grid-template-columns:60px 1fr 52px;gap:14px;padding:20px 0;}
+  .ep .ep-num{font-size:11px;padding-left:0;}
+  .ep .ep-title{font-size:16px;}
+  .ep .ep-meta{display:none;}
+  .ep .ep-play{width:40px;height:40px;}
+  .sub-grid{grid-template-columns:1fr;gap:18px;}
+  .sub-blurb{justify-self:start;}
+  .sub-link{grid-template-columns:32px 1fr auto;gap:14px;padding:18px 0;}
+  .sub-link:hover{padding-left:12px;padding-right:12px;}
+  .sub-link .sl-desc{display:none;}
+  .sub-link .sl-name{font-size:16px;}
+  .section-title{font-size:22px;}
+  footer .frame{grid-template-columns:1fr;gap:32px;}
+  .cover-card .cc-lockup{font-size:34px;}
+}
+</style>
+</head>
+<body>
+
+
+<header class="nav">
+  <div class="frame">
+    <a class="brand" href="index.html">
+      <svg class="mark" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <rect x="0.5" y="0.5" width="27" height="27" stroke="#82B8E8" stroke-opacity="0.6"/>
+  <line x1="14" y1="0" x2="14" y2="28" stroke="#82B8E8" stroke-opacity="0.4"/>
+  <line x1="0" y1="14" x2="28" y2="14" stroke="#82B8E8" stroke-opacity="0.4"/>
+  <rect x="14" y="0" width="14" height="14" fill="#82B8E8"/>
+</svg>
+      <span class="lockup">The Manager's <span>Matrix</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html#archive" aria-current="page">Episodes</a>
+      <a href="about.html">About</a>
+      <a href="index.html#subscribe">Subscribe</a>
+    </nav>
+    <a class="nav-cta" href="index.html#latest">Latest Episode</a>
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="frame">
+    <div class="hero-eyebrow">
+      <div class="left">
+        <span class="mono">A.01 / Masthead</span>
+        <span class="mono">Est. 2025</span>
+      </div>
+      <span class="mono">53 Episodes · ~12h total</span>
+    </div>
+
+    <h1 class="h1-lockup">
+      <span class="small">The Manager's</span>
+      <span class="matrix">Matrix</span>
+    </h1>
+
+    <div class="hero-rule"></div>
+
+    <p class="hero-tagline">
+      Short, focused leadership pieces for managers in motion.
+      <strong>The Manager's Matrix</strong> is built around the challenges modern leaders
+      face every day — narrated with warm, cinematic storytelling and zero buzzwords.
+    </p>
+
+    <div class="hero-meta">
+      <div class="stat"><div class="num">53</div><div class="lbl">Episodes</div></div>
+      <div class="stat"><div class="num">~12h</div><div class="lbl">Listening time</div></div>
+      <div class="stat"><div class="num">2×/wk</div><div class="lbl">New drops</div></div>
+      <div class="stat"><div class="num">~18m</div><div class="lbl">Avg length</div></div>
+    </div>
+
+    <div class="latest" id="latest">
+      <div>
+        <div class="l-eyebrow">▸ Now playing — Episode 053</div>
+        <div class="l-title">The Talent Trap Why Your Best People Don&#39;t Stay for the Money</div>
+        <div class="l-meta">26:53 · MAY 18, 2026</div>
+      </div>
+      <button class="play-cta" id="latestPlay">
+        <span class="tri"></span>
+        Listen Now
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="archive" id="archive">
+  <div class="frame">
+    <div class="section-head">
+      <h2 class="section-title">The <span>Archive</span></h2>
+      <div class="season-picker">
+        <span class="picker-label">B.01 / Season</span>
+        <span class="season-select">
+          <select id="seasonSelect" aria-label="Choose a season">
+            <option value="2" selected>Season II — 26 episodes</option><option value="1">Season I — 27 episodes</option>
+          </select>
+          <span class="chev"></span>
+        </span>
+      </div>
+    </div>
+    
+  <div class="season-group is-active" data-season="2">
+    <div class="sg-head">
+      <div class="sg-num"><small>SEASON</small>II</div>
+      <div class="sg-meta">
+        <div><span class="strong">26 episodes</span> · 8h 0m total</div>
+        <div>Feb 2026 → May 2026</div>
+      </div>
+    </div>
+    <div class="ep-list">
+      
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/120106020/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-4-17%2F5cb9f7be-df5d-4747-dc8c-2697c8ba2c7f.mp3">
+      <div class="ep-num">EP <strong>053</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Talent Trap Why Your Best People Don&#39;t Stay for the Money</h3>
+        <p class="ep-desc">Why do your best employees leave even when you pay them well? This episode explores the counterintuitive truth about talent retention, it&#39;s rarely about the money. Instead, star performers are driven by three fundamental needs: to have their ideas genuinely engaged with, to be invested in for their growth and potential, and to be specifically and regularly recognized for their contributions. We dig into why treating talented people as individuals, not as interchangeable members of a group, is the real secret to retention.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">26:53</span>
+        <span>MAY 18, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 053: The Talent Trap Why Your Best People Don&#39;t Stay for the Money">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/119858018/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-4-12%2F911545c1-c10f-aedc-19b8-4a759414b142.mp3">
+      <div class="ep-num">EP <strong>052</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Feedback Paradox Why Asking for Input Isn&#39;t Enough</h3>
+        <p class="ep-desc">You collect feedback all the time, but are you actually doing anything with it? When employee surveys disappear into the void and nothing changes, people stop speaking up. In this episode, we explore what separates companies that genuinely listen from those that just go through the motions and how to close the gap between hearing feedback and acting on it. From managing data overwhelm to navigating conflicting viewpoints, from protecting privacy to having the courage to share hard truths, we dig into the real work of turning input into action. You&#39;ll discover why follow-up matters more than perfect solutions, and how simple accountability practices like the 1-2-3 rule can rebuild trust faster than you might think.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">23:58</span>
+        <span>MAY 15, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 052: The Feedback Paradox Why Asking for Input Isn&#39;t Enough">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/119705072/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-4-8%2F7e198abd-ed61-3753-b337-c285199d09fd.mp3">
+      <div class="ep-num">EP <strong>051</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Four Quests Why Your Best People Actually Leave</h3>
+        <p class="ep-desc">Why do your best people really leave? It&#39;s probably not what you think. In this episode, we explore the research-backed framework that explains departures far better than exit interviews ever could—the Four Quests for Progress. You&#39;ll learn why traditional job descriptions fail, what &quot;push and pull&quot; forces actually drive people away, and three concrete strategies to keep talented people engaged and growing. From shadow job descriptions to progress conversations, discover the uncommon moves that transform retention.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">15:41</span>
+        <span>MAY 11, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 051: The Four Quests Why Your Best People Actually Leave">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/118316531/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-3-12%2F9040b0bf-4de0-992e-0a57-c74872dcfdf1.mp3">
+      <div class="ep-num">EP <strong>050</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Amateur Trap Why Most Managers Were Never Taught to Manage</h3>
+        <p class="ep-desc">What if the most important profession in modern society has almost no formal training system? Fredmund Malik&#39;s provocative argument turns conventional wisdom on its head: management isn&#39;t about charisma or talent — it&#39;s a craft that can and must be learned, like surgery or flying a plane. This episode dives deep into why we&#39;ve been treating management as an amateur hobby, the four elements that define it as a true profession, and why results — not effort, not fun — are the only currency that counts. If you&#39;ve ever wondered why so many organizations feel dysfunctional despite smart people running them, this episode will change how you think about leadership forever.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">20:59</span>
+        <span>MAY 08, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 050: The Amateur Trap Why Most Managers Were Never Taught to Manage">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/118316508/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-3-12%2Ffbebb193-373b-29d8-2091-db20dd3e1d1f.mp3">
+      <div class="ep-num">EP <strong>049</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Followership Paradox Why the Best Leaders Know How to Be Led</h3>
+        <p class="ep-desc">What if the most underrated leadership skill isn&#39;t leading at all, but knowing when to follow? In this episode, we unpack the surprising paradox at the heart of great leadership: the ability to step back, listen deeply, and let others take the lead when it matters most. Drawing on research from Amy Edmondson and Tomas Chamorro-Premuzic, we explore why followership isn&#39;t passive but is actually a set of powerful, active skills, from suspending your ego in real time, to picking up the weak signals that everyone else misses, to building the kind of psychological safety that makes people tell you the truth instead of what you want to hear. Whether you&#39;re running a team of five or leading an entire organization, this conversation will challenge how you think about authority, listening, and what it really means to be in charge. The best leaders don&#39;t always sit at the head of the table. Sometimes they&#39;re the ones leaning back and saying, &quot;Tell me more.&quot; ()</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">18:53</span>
+        <span>MAY 04, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 049: The Followership Paradox Why the Best Leaders Know How to Be Led">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/118314668/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-3-12%2Fd3ffb233-bfd6-a3a0-e885-d32c1996bc3a.mp3">
+      <div class="ep-num">EP <strong>048</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Dirty Work Dilemma How to Assign Tasks Nobody Wants Without Losing Your Team</h3>
+        <p class="ep-desc">Every manager knows the feeling: staring at a task list full of unglamorous, tedious, absolutely-must-get-done work and wondering who to assign it to without crushing morale. This episode dives into a powerful insight from recent research that challenges everything you think you know about delegation. Stop trying to convince people to want the work, and start helping them accept the outcome. We explore the critical difference between persuasion and acceptance, unpack the surprising psychology behind offering even small freedoms within non-negotiable assignments, and walk through the three questions every leader should ask themselves before handing out work nobody wants. Whether you&#39;re managing a team of two or twenty, this episode will change how you think about fairness, autonomy, and the conversations that make or break trust. The dirty work isn&#39;t going anywhere, but your approach to it is about to get a serious upgrade. ()</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">18:40</span>
+        <span>MAY 01, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 048: The Dirty Work Dilemma How to Assign Tasks Nobody Wants Without Losing Your Team">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/118314387/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-3-12%2F08bf9d0c-ab5d-4b21-cdcb-81442299272e.mp3">
+      <div class="ep-num">EP <strong>047</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Guilt Loop Why Gen Z Uses AI But Doesn&#39;t Feel Good About It</h3>
+        <p class="ep-desc">Most of Gen Z is using AI at work every day, and most of them also feel guilty about it. This episode unpacks the fascinating contradiction at the heart of how young workers relate to generative AI, drawing on recent Harvard Business Review research to explore why ambivalence, not resistance, is the real challenge managers need to understand. We dig into why dismissing that guilt actually backfires, how to create space for honest conversations about AI use, and what it really looks like to help someone build genuine skill in an era where a chatbot can produce a polished draft in seconds. Whether you lead a team of twenty-somethings or you are the twenty-something with a knot in your stomach, this one&#39;s going to hit close to home. ()</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">21:07</span>
+        <span>APR 27, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 047: The Guilt Loop Why Gen Z Uses AI But Doesn&#39;t Feel Good About It">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/117234532/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-2-20%2F369d8080-2887-8e0e-bdc3-32b86a82efa2.mp3">
+      <div class="ep-num">EP <strong>046</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Poaching Problem How to Hire Internally Without Making Enemies</h3>
+        <p class="ep-desc">What happens when you find the perfect hire, but they already work for someone else in your company? This episode dives into one of the most politically delicate moves a manager can make: recruiting talent from another internal team without torching relationships, bruising egos, or creating lasting resentment across the organization. Drawing on insights from Rebecca Knight, we explore why framing matters more than you think, why your very first conversation shouldn&#39;t be with the other manager, and how internal mobility done right is actually one of the most powerful retention tools a company has. Whether you&#39;re a new manager or a seasoned leader, this episode will change how you think about the unspoken rules of hiring inside your own walls. Because the best talent move you&#39;ll ever make shouldn&#39;t be the one that costs you an ally. ()</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">16:57</span>
+        <span>APR 24, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 046: The Poaching Problem How to Hire Internally Without Making Enemies">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/117234501/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-2-20%2F305a1834-02ef-e7fa-efd8-39afa74adff1.mp3">
+      <div class="ep-num">EP <strong>045</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Insecurity Equation How to Lead the Person Who&#39;s Supposed to Be Leading You</h3>
+        <p class="ep-desc">What do you do when the person who&#39;s supposed to be leading you is quietly drowning in their own self-doubt, and it&#39;s becoming everyone&#39;s problem? This episode dives into the surprisingly common reality of insecure leadership, exploring why organizations practically manufacture insecurity by promoting talented people into roles that demand entirely different skills, then offering them almost no honest feedback. Drawing on the research of Jeffrey Yip and Dritjon Gruda, we break down two distinct types of insecure leaders: the anxious micromanager and the avoidant one, and why the strategy that works for one can backfire spectacularly with the other. You&#39;ll learn how to recognize when your boss&#39;s self-doubt is shaping your team&#39;s culture, how to offer reassurance without becoming an emotional crutch, and how to protect your own energy when someone else&#39;s insecurity keeps leaking into your workday. Because sometimes the most important leadership skill isn&#39;t leading your team. It&#39;s learning how to lead up. ()</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">19:51</span>
+        <span>APR 20, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 045: The Insecurity Equation How to Lead the Person Who&#39;s Supposed to Be Leading You">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/117234382/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-2-20%2F264f80fc-31c4-46a7-fe42-ab605ce6df2a.mp3">
+      <div class="ep-num">EP <strong>044</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Graveyard of Good Ideas Why Your Change Initiative Is Dying Before It Starts</h3>
+        <p class="ep-desc">Most change initiatives don&#39;t die because the idea was bad — they die because the organization was never ready to receive them. In this episode, we unpack why so many well-funded, well-planned transformations quietly end up in the graveyard, drawing on Timothy Clark&#39;s concept of &quot;the false start&quot; and the painful reality that most teams are already running on two percent battery life when the next big thing gets announced. We dig into the brutal art of &quot;the awful triage&quot; — why you need to kill zombie initiatives before launching new ones — and explore four unglamorous but essential actions that separate change that sticks from change that becomes a cautionary tale everyone pretends never happened. If you&#39;ve ever watched a brilliant strategy get a standing ovation on Monday and go silent by quarter&#39;s end, this one&#39;s for you.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">19:14</span>
+        <span>APR 17, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 044: The Graveyard of Good Ideas Why Your Change Initiative Is Dying Before It Starts">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/116942734/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-2-15%2F411bf98b-498e-a372-cd18-b97b1995c2e6.mp3">
+      <div class="ep-num">EP <strong>043</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The New Middle Manager Has a Robot on Their Team: Six Skills You Didn&#39;t Know You Needed</h3>
+        <p class="ep-desc">What happens when your direct reports aren&#39;t all human? A marketing director gets told to performance-review her AI agents, and suddenly the future of middle management isn&#39;t theoretical anymore — it&#39;s Tuesday. This episode unpacks a powerful Harvard Business Review framework identifying six essential capabilities for the emerging role of &quot;agent manager,&quot; exploring why AI operational literacy is the new table stakes, why domain expertise matters more not less in an AI-augmented workplace, and how managing a teammate whose mistakes look identical to its successes demands an entirely new leadership mindset. Whether you&#39;re already overseeing AI agents or sense that day is coming fast, this conversation will reshape how you think about your role. The org chart just got a lot weirder — and your skill set needs to catch up.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">17:34</span>
+        <span>APR 13, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 043: The New Middle Manager Has a Robot on Their Team: Six Skills You Didn&#39;t Know You Needed">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/116793390/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-2-12%2F70f305f4-8a4c-24a3-e5fd-b3e3f0a622d9.mp3">
+      <div class="ep-num">EP <strong>042</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Strategy Nobody Remembers Why Your Best Plans Die in PowerPoint</h3>
+        <p class="ep-desc">Most strategies don&#39;t fail because they&#39;re wrong — they fail because no one can remember them past Tuesday. In this episode, we dig into why even the smartest plans get buried in jargon-heavy slide decks and explore the surprisingly powerful role that visual metaphor plays in making strategy stick. You&#39;ll learn why human brains resist abstraction and crave imagery, how a single well-chosen metaphor can communicate more than a sixty-slide presentation, and what the research-backed process looks like for finding the right one for your organization. Whether you&#39;re leading a twelve-person startup or a twelve-thousand-person enterprise, this conversation will change how you think about the gap between strategy and execution. If your best thinking keeps dying in PowerPoint, this is the episode that brings it back to life.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">18:17</span>
+        <span>APR 10, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 042: The Strategy Nobody Remembers Why Your Best Plans Die in PowerPoint">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/116793352/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-2-12%2F030155c4-24a4-6e67-12e6-33cd2c68785a.mp3">
+      <div class="ep-num">EP <strong>041</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Loudest Person in the Room Why Leading Change Is Slowly Breaking You</h3>
+        <p class="ep-desc">You know that moment at 2 a.m. when the doubt creeps in — what if I&#39;m wrong about all of this? — and then you get up the next morning and project total confidence like nothing happened? This episode explores the emotional toll of leading organizational change, the part no framework or stakeholder map ever prepares you for. Drawing on insights from Ron Carucci, we dig into the hidden tensions change leaders carry: the distortion that creeps into your voice when fear takes over, the dangerous space between drive and doubt that most executives inhabit in silence, and why the relentless pressure to be visionary, cheerleader, and lightning rod all at once is quietly breaking the people who hold it all together. If you&#39;ve ever felt like you&#39;re slowly cracking under a weight you&#39;re not allowed to name, this one&#39;s for you — and it might be the most honest conversation about leadership no one else is having.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">20:24</span>
+        <span>APR 06, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 041: The Loudest Person in the Room Why Leading Change Is Slowly Breaking You">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/116714538/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-2-10%2F720b4816-6de6-085a-5bd2-e901a77b6bcf.mp3">
+      <div class="ep-num">EP <strong>040</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Authenticity Trap When Just Be Yourself Becomes Career Sabotage</h3>
+        <p class="ep-desc">&quot;Just be yourself&quot; sounds like empowering advice — until it quietly derails your career. In this episode, we unpack the surprisingly dangerous gap between authenticity and impulsivity at work, exploring why the most well-intentioned honesty can reshape your reputation in ways you never intended. Drawing on psychologist Tomas Chamorro-Premuzic&#39;s research from Harvard Business Review, we dig into specific behaviors — like sharing political beliefs at work and delivering unfiltered feedback — that feel courageous in the moment but can erode how colleagues perceive your competence and professionalism. You&#39;ll walk away with a sharper understanding of why social intelligence isn&#39;t the opposite of authenticity, why context should always shape your candor, and how to tell the difference between being real and being reckless. Because the goal was never to be fake — it&#39;s to stop confusing self-expression with self-sabotage.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">18:46</span>
+        <span>APR 03, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 040: The Authenticity Trap When Just Be Yourself Becomes Career Sabotage">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/116714456/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-2-10%2F9c58de65-7917-ace7-f78e-f6657ea91437.mp3">
+      <div class="ep-num">EP <strong>039</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Outsider&#39;s Dilemma How to Lead When the Culture Was Built Without You</h3>
+        <p class="ep-desc">Every new leader knows the feeling: you walk into your first meeting, the room erupts in laughter at an inside joke, and you realize the hardest part of this role won&#39;t be strategy — it&#39;ll be earning trust inside a culture that was built long before you arrived. This episode dives deep into the outsider&#39;s dilemma, exploring why so many talented leaders stumble not from lack of vision but from misreading the complex, deeply rooted cultures they inherit. You&#39;ll learn the critical difference between observing and evaluating, how to map the invisible power structures that no org chart will ever show you, and why the surface advice to &quot;listen first&quot; only works when you understand the nuance underneath it. If you&#39;ve ever stepped into a role where the unspoken rules mattered more than the written ones, this conversation will change how you lead from day one.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">17:07</span>
+        <span>MAR 30, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 039: The Outsider&#39;s Dilemma How to Lead When the Culture Was Built Without You">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/115881917/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-1-22%2F7abe8c41-9a24-a023-f3ef-47d09f659b1e.mp3">
+      <div class="ep-num">EP <strong>038</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Credit Paradox Why the Best Leaders Struggle to Talk About Themselves</h3>
+        <p class="ep-desc">The best leaders are often the worst at answering one deceptively simple question: &quot;What do you actually do?&quot; In this episode, we unpack the credit paradox — the phenomenon where the more senior and impactful your work becomes, the harder it is to make that impact visible to the people who matter. We explore why leadership contributions become dangerously invisible as you climb, how organizations unknowingly penalize the very people holding everything together, and a powerful reframing technique called the &quot;we-then-me&quot; structure that lets you advocate for yourself without undermining your team. Whether you&#39;re preparing for a performance review, navigating a board conversation, or just trying to explain your role at a dinner party, this episode will change how you talk about the work only you can see. Stop being the director everyone forgets was in the room.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">17:19</span>
+        <span>MAR 27, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 038: The Credit Paradox Why the Best Leaders Struggle to Talk About Themselves">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/115879737/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-1-22%2F9f52ef37-429a-f0d1-0c9f-9f0140c90e65.mp3">
+      <div class="ep-num">EP <strong>037</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Feedback Paradox: Why Your Team Already Knows What&#39;s Wrong (And Why They&#39;ll Never Tell You)</h3>
+        <p class="ep-desc">&quot;Does anyone have any feedback?&quot; Silence. A few polite nods. Sound familiar? Most teams operate in a kind of polite fiction — where the hard truths stay buried and easy agreements float to the surface. And the conventional fix, teaching people to deliver feedback better, completely misses the point. The real issue is whether people believe the door is actually open. In this episode, Björn flips the feedback conversation on its head and makes a compelling case that the most powerful thing a leader can do is learn to ask — specifically, genuinely, and often. In this episode: Why &quot;any feedback?&quot; is a closed question disguised as an open one How leaders modelling vulnerability transforms the entire social dynamic of a team Why acting on feedback matters as much as asking for it How to make feedback-seeking structural, so it doesn&#39;t rely on courage When was the last time you — not your team, not your organization, but you — asked someone for specific feedback on something you could do better? If you can&#39;t remember, that&#39;s exactly where to start.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">19:55</span>
+        <span>MAR 23, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 037: The Feedback Paradox: Why Your Team Already Knows What&#39;s Wrong (And Why They&#39;ll Never Tell You)">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/115879165/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-1-22%2F3530043a-3ae7-77b1-0c5a-059fb394c1eb.mp3">
+      <div class="ep-num">EP <strong>036</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Lighthouse the Garden and the Bridge Why the Right Metaphor Can Change Everything</h3>
+        <p class="ep-desc">&quot;We&#39;re embarking on a strategic realignment of our operational synergies.&quot; Sound familiar? Now imagine instead: &quot;We need to renovate the house — not because it&#39;s broken, but because we want to live here for the next 50 years.&quot; Same message. Completely different impact. In this episode, Björn makes the case that during times of change, metaphors aren&#39;t decoration — they&#39;re infrastructure. The right one can calm a nervous team, unify a fragmented organisation, and give people the courage to walk into the unknown. The wrong one can deepen resistance, alienate half the room, or make a painful restructuring feel coldly transactional. In this episode: Why change triggers emotional, not logical, responses — and what that means for how you communicate The SCARF model and how to match your metaphor to the threat people are actually feeling Four questions to find a metaphor that sticks, travels, and scales The hidden risks of metaphors — and how to avoid them The words people remember aren&#39;t the ones that explain the change. They&#39;re the ones that help people feel brave enough to walk into it.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">18:41</span>
+        <span>MAR 20, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 036: The Lighthouse the Garden and the Bridge Why the Right Metaphor Can Change Everything">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/115876849/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-1-22%2F08d6b6e8-90bd-16b1-0906-d69aef6818cf.mp3">
+      <div class="ep-num">EP <strong>035</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Firefighter Trap Why Your Biggest Team Is Your Biggest Problem</h3>
+        <p class="ep-desc">What happens when your team keeps growing but the hours in your day don&#39;t? This episode dives into one of modern management&#39;s most pervasive and least discussed problems: the creeping expansion of team sizes that turns capable leaders into overwhelmed firefighters, reacting to every ping instead of actually leading. Drawing on recent research from Harvard Business Review, we explore why the math of oversized teams simply doesn&#39;t work, how management overload silently degrades your decision-making and leaves your people feeling invisible, and a powerful reframing — shifting from managing individuals to managing clusters — that can fundamentally change the way you spend your time and attention. If Monday morning already feels like triage, this one&#39;s for you.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">18:04</span>
+        <span>MAR 16, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 035: The Firefighter Trap Why Your Biggest Team Is Your Biggest Problem">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/115873374/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-1-22%2F4f5c26ba-1f62-b140-5f98-4c81c9983acc.mp3">
+      <div class="ep-num">EP <strong>034</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Empty Tank: Why Leadership Is Quietly Destroying You</h3>
+        <p class="ep-desc">You handled the layoff conversation professionally. You stayed calm in the conflict. You carried the pressure without complaint. But what did it cost you? In this episode of The Manager’s Matrix, Björn exposes the invisible emotional drain of leadership — the slow, silent depletion that happens between meetings, after hard decisions, and behind composed expressions. Drawing on research around emotional labour and performance psychology, this episode unpacks: • Why leadership is uniquely emotionally taxing • How suppressed emotions erode clarity, relationships, and health • The science behind recovery and sustainable high performance • Three practical habits every leader needs: reflection, reframing, and restoration This is not self-help fluff. It’s a leadership sustainability strategy. Because leadership is not a sprint. It’s a decades-long endurance event. If you’re feeling quietly exhausted but can’t explain why, this episode will give you language, structure, and actionable tools to refill your tank and lead with renewed clarity</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">18:10</span>
+        <span>MAR 13, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 034: The Empty Tank: Why Leadership Is Quietly Destroying You">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/115880126/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-1-22%2F6da7cc5e-649c-6177-82b6-5982fafd1f7d.mp3">
+      <div class="ep-num">EP <strong>033</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Silence That Makes You Stronger: Why Your Best Leadership Move Is Shutting Up</h3>
+        <p class="ep-desc">You know the answer. You can see it clearly. Every instinct is telling you to just say it. But what if that instinct — the one that got you promoted in the first place — is quietly undermining your effectiveness as a senior leader? In this episode, Björn tackles the transition that derails so many talented managers: moving from being the person with the answers to being the person who makes everyone else better. It&#39;s not a skills gap. It&#39;s an identity shift. And it&#39;s harder than anyone tells you it will be. In this episode: Why jumping in with the answer turns you into the bottleneck of your own organisation How to redefine your scoreboard when results take months, not days, to appear Building systems that give you visibility without creating dependency The grief that comes with leaving behind the role you were brilliant at — and how the best leaders handle it The best senior leaders share one quality — and it&#39;s not charisma or brilliance. It&#39;s restraint. The next time someone brings you a problem and you know the answer, what would happen if you just didn&#39;t give it?</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">16:15</span>
+        <span>MAR 09, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 033: The Silence That Makes You Stronger: Why Your Best Leadership Move Is Shutting Up">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/115844481/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-1-21%2Ff32a6813-f9d0-8abd-8be7-4ab8375afdde.mp3">
+      <div class="ep-num">EP <strong>032</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Yoga Mat in the Boardroom: Ancient Wisdom for Modern Leaders</h3>
+        <p class="ep-desc">What if the secret to better leadership is thousands of years old? In this episode, Björn unpacks four powerful principles from yoga philosophy — and shows how they map directly onto the hardest parts of leading people. From managing stress and trusting your gut, to cutting through complexity and getting closer to the real work, these aren&#39;t wellness trends — they&#39;re practical tools for showing up as a clearer, calmer, more effective leader. Whether you&#39;re drowning in back-to-back meetings or making high-stakes decisions under pressure, this episode will challenge you to think differently about what it actually takes to lead well. In this episode: Why your physiological state shapes the quality of your decisions How to use intuition alongside data — not instead of it The case for simplicity as a strategic advantage What Toyota&#39;s &quot;go and see&quot; philosophy has in common with ancient wisdom If your team is unsteady, start by steadying yourself. That&#39;s where great leadership begins.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">18:49</span>
+        <span>MAR 06, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 032: The Yoga Mat in the Boardroom: Ancient Wisdom for Modern Leaders">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/115822206/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-1-22%2Fd60d643c-8cf2-9c68-72a1-6c983f485d61.mp3">
+      <div class="ep-num">EP <strong>031</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Coach in Your Own Head: Why Your Best Leadership Advisor Might Be You</h3>
+        <p class="ep-desc">What if the most underutilized leadership tool you have is already sitting between your ears? This episode dives into the uncomfortable truth that the moments leaders most desperately need a thinking partner — during crises, high-stakes decisions, and team meltdowns — are exactly when coaching support is least likely to be available. Drawing on Katie Best&#39;s SOLVE framework from Harvard Business Review, we walk through a structured self-coaching practice step by step, starting with why most leaders can&#39;t even articulate their real problem in two sentences, and exploring how to close the critical gap between when you need help and when help actually shows up. Whether your coaching budget just got slashed or your next session is three weeks out and the decision is due Friday, this episode gives you something better than a pep talk — it gives you a process. Because the gym is empty, you&#39;re standing there alone, and you better know what to do with the equipment.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">19:15</span>
+        <span>MAR 02, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 031: The Coach in Your Own Head: Why Your Best Leadership Advisor Might Be You">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/115822190/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-1-27%2F6cdb5bbc-ebbe-c3e3-ffd5-b1b56d6e5222.mp3">
+      <div class="ep-num">EP <strong>030</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Bolt-On Trap: Why Your AI Strategy Is Failing and What Leadership Actually Looks Like Now</h3>
+        <p class="ep-desc">A senior VP uses ChatGPT to draft strategy in minutes… and tells no one. Her team keeps grinding through manual reports like it’s 2019. This is the real AI gap. Not technology. Leadership. In this episode of The Manager’s Matrix, Björn unpacks why AI won’t create value on its own and why the real transformation is human. Drawing on insights from leading strategy thinkers, we explore five leadership shifts that separate AI hype from real impact: • Break out of your silo • Redesign workflows, don’t bolt on tools • Treat AI as a teammate, not a gadget • Develop human skills, not just efficiency • Lead AI adoption visibly and imperfectly The future of AI at work won’t be decided by models. It will be decided by leaders who close the gap between what’s possible and what their teams are actually doing. The question is simple: What story are your choices about AI telling your team?</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">19:01</span>
+        <span>FEB 27, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 030: The Bolt-On Trap: Why Your AI Strategy Is Failing and What Leadership Actually Looks Like Now">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/115822163/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-1-21%2Ff1e1662d-e45b-eca9-6d7c-fbf671c5abb2.mp3">
+      <div class="ep-num">EP <strong>029</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Authenticity Trap: When &quot;Just Be Yourself&quot; Becomes Career Sabotage</h3>
+        <p class="ep-desc">It sounds empowering. It sounds brave. It can also quietly derail your career. In this episode of The Manager’s Matrix , Björn breaks down a hard truth: authenticity at work is not about being unfiltered. It’s about being calibrated. Inspired by insights from Thomas Chamorro-Premuzic in Harvard Business Review , we unpack five ways “being yourself” can backfire: Dropping political opinions into the wrong room Venting emotions instead of regulating them Confusing bluntness with leadership Oversharing vulnerability Ignoring the unspoken rules of presentation This isn’t about wearing a mask. It’s about reading context. The most effective leaders don’t suppress who they are. They adjust the dial. They know when to lean in, when to hold back, and which version of themselves the moment demands. Because authenticity isn’t a light switch. It’s a dimmer. And mastering it might be one of the most powerful leadership skills you’ll ever develop.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">17:18</span>
+        <span>FEB 23, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 029: The Authenticity Trap: When &quot;Just Be Yourself&quot; Becomes Career Sabotage">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/115798413/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-1-20%2F0d3840ba-a066-46a8-19cb-ab0fd8d98ae6.mp3">
+      <div class="ep-num">EP <strong>028</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Seven Lies you tell yourself that kill your Leadership</h3>
+        <p class="ep-desc">You’re succeeding. But you’re exhausted. In this episode of The Manager’s Matrix , Björn explores seven hidden beliefs that silently limit high-performing leaders, from “I need to be involved” to “I don’t belong here.” These narratives once drove your success. Under pressure, they now create bottlenecks, urgency addiction, micromanagement, overcommitment, and imposter syndrome. The shift is not tactical. It’s cognitive. Enable instead of control. Discern instead of react. Catalyze instead of answer. Lead with ownership, not performance. If your effort is rising but your impact is flattening, the ceiling may not be external. It may be between your ears.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">16:59</span>
+        <span>FEB 21, 2026</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 028: The Seven Lies you tell yourself that kill your Leadership">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+    </div>
+  </div>
+
+  <div class="season-group" data-season="1">
+    <div class="sg-head">
+      <div class="sg-num"><small>SEASON</small>I</div>
+      <div class="sg-meta">
+        <div><span class="strong">27 episodes</span> · 4h 2m total</div>
+        <div>Apr 2025 → Oct 2025</div>
+      </div>
+    </div>
+    <div class="ep-list">
+      
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/109617884/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-9-13%2Fbeb50b55-3682-f2b6-92ca-8991f0c0001d.mp3">
+      <div class="ep-num">EP <strong>027</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">When Leading Becomes Too Much: Reclaiming Your Focus as a Manager</h3>
+        <p class="ep-desc">In this episode of The Manager’s Matrix , Björn explores what happens when leadership turns heavy, when your team needs more of you than you can give, and when your role, once exciting and purposeful, begins to feel like a constant firefight. Drawing on research and lived experience, he shares how to rebuild structure, space, and clarity so that leadership becomes sustainable again, for both you and your team.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">34:09</span>
+        <span>OCT 13, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 027: When Leading Becomes Too Much: Reclaiming Your Focus as a Manager">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/108737310/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-8-24%2Fc95255e6-d113-5161-016e-28f2c223abbd.mp3">
+      <div class="ep-num">EP <strong>026</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Cut the Noise: Mastering Communication in the Modern Workplace</h3>
+        <p class="ep-desc">Communication tools were meant to make work easier—but for most teams, they’ve only added noise. Endless Slack threads, late-night emails, and back-to-back meetings are leaving people exhausted, unfocused, and burned out. In this episode of The Manager’s Matrix , host Björn Grosso unpacks the hidden costs of communication overload and shares a roadmap for cutting through the clutter. Drawing on fresh insights from Harvard Business Review, you’ll learn how to build a team “communication charter,” reduce unnecessary meetings, and set clear norms that restore both productivity and sanity. With real-world examples, practical tips, and leadership lessons, this episode will help you design a workplace where communication works for you—not against you. And don’t miss the teaser: Björn’s upcoming book The Manager’s Matrix , expanding on these themes with even more tools for modern leadership.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">18:42</span>
+        <span>SEP 24, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 026: Cut the Noise: Mastering Communication in the Modern Workplace">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/107659563/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-8-1%2Fce193305-9bf5-6101-1e2c-728cd6e63acf.mp3">
+      <div class="ep-num">EP <strong>025</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Knowing When to Let Go: Sunsetting Projects with Purpose</h3>
+        <p class="ep-desc">The Manager’s Matrix returns after the summer break with a new rhythm: one in-depth episode each week. In this kickoff, Björn explores the overlooked art of ending projects well. Why do leaders struggle to sunset initiatives? How can endings be handled with clarity, respect, and learning? And why is letting go sometimes the most courageous act of leadership? This expanded episode also gives listeners a glimpse into the upcoming book The Manager’s Matrix , currently in the making.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">25:10</span>
+        <span>SEP 01, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 025: Knowing When to Let Go: Sunsetting Projects with Purpose">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/105486819/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-6-14%2Fd4656873-69a1-6faa-e692-451abe5e2473.mp3">
+      <div class="ep-num">EP <strong>024</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Hybrid Still Isn’t Working - And That’s On Us</h3>
+        <p class="ep-desc">Before we head into summer, one truth is clear: everyone needs a break. But while we step away to recharge, one challenge still lingers in the background—hybrid work. In this reflective season finale, Björn Grosso explores why hybrid models are still falling short, and how we can fix them. Through structure, clarity, and empathy, we can reimagine hybrid not as a broken promise—but as a system worth getting right.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">8:38</span>
+        <span>JUL 14, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 024: Hybrid Still Isn’t Working - And That’s On Us">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/105300992/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-6-10%2Fc10842ac-efc1-ec07-eee9-ac56daf5be21.mp3">
+      <div class="ep-num">EP <strong>023</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Are You Afraid of Becoming Obsolete? Reclaiming Relevance in a Changing World</h3>
+        <p class="ep-desc">That quiet fear that your skills—or even your role—might be losing value? You’re not alone. In this extended episode of The Manager’s Matrix , Björn Grosso explores how to stay professionally relevant in an ever-changing world. Learn how to assess your unique value, develop irreplaceable human traits, evolve beyond your comfort zone, and create a legacy that lives forward—not backward. Whether you’re mid-career or leading at the top, this episode will help you turn fear into fuel.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">8:32</span>
+        <span>JUL 10, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 023: Are You Afraid of Becoming Obsolete? Reclaiming Relevance in a Changing World">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/105128922/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-6-7%2Fa08062ea-0daa-683f-af72-d938f60a89c1.mp3">
+      <div class="ep-num">EP <strong>022</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Beyond the Day-to-Day: Making the Leap from Manager to Executive</h3>
+        <p class="ep-desc">In The Manager’s Matrix , we equip you with the mindset and tools to thrive in complexity. And few transitions are more complex—or more misunderstood—than the leap from manager to executive. This episode explores what it takes to succeed at the top: letting go of control, shifting from operator to strategist, and learning to lead through systems, culture, and influence.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">10:49</span>
+        <span>JUL 07, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 022: Beyond the Day-to-Day: Making the Leap from Manager to Executive">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/104954190/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-6-2%2F7cbdfa2f-abcd-460a-ab2e-4effce76b748.mp3">
+      <div class="ep-num">EP <strong>021</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Power of Strategic Subtraction: Doing More by Doing Less</h3>
+        <p class="ep-desc">In Episode 21 of The Manager’s Matrix , host Björn Grosso explores how leaders can cut complexity, cost, and clutter—without weakening their business. Learn a powerful 3-part test to evaluate any subtraction and discover six methods to streamline operations while increasing resilience, efficiency, and user satisfaction. This isn’t about cutting for the sake of cutting—it’s about removing friction so your team, systems, and strategy can thrive.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">9:32</span>
+        <span>JUL 02, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 021: The Power of Strategic Subtraction: Doing More by Doing Less">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/104799589/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-5-29%2F4af5cd07-b3df-c6da-e78b-2773d90dc57c.mp3">
+      <div class="ep-num">EP <strong>020</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Leading What You Didn’t Build: How to Earn Trust with an Inherited Team</h3>
+        <p class="ep-desc">You’ve stepped into a new leadership role—but the team you now lead isn’t one you built. They don’t know you, they didn’t choose you, and they might still be loyal to the last manager. So how do you gain trust, set a new direction, and lead with integrity—without alienating the people already there? In this episode of The Manager’s Matrix , Björn Grosso walks you through a 5-step roadmap to help you listen first, learn the existing culture, and lead with clarity, credibility, and connection.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">9:20</span>
+        <span>JUN 30, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 020: Leading What You Didn’t Build: How to Earn Trust with an Inherited Team">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/104657478/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-5-26%2F65a4a1b0-4b11-7fa8-d5f8-ecc810abfb1e.mp3">
+      <div class="ep-num">EP <strong>019</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Let Go to Grow - How to Become a Better Delegator</h3>
+        <p class="ep-desc">Delegation is a cornerstone of great leadership—but letting go can be hard. In this deep-dive episode of The Manager’s Matrix , host Björn Grosso explores the real reasons why leaders struggle to delegate, and how to overcome those barriers with confidence. Learn how to identify what to delegate, how to build trust without micromanaging, and how to grow your team through feedback and reflection. Whether you’re a first-time manager or a seasoned leader, this episode will help you create more space, scale your impact, and become the kind of leader others want to follow.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">7:27</span>
+        <span>JUN 26, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 019: Let Go to Grow - How to Become a Better Delegator">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/104469355/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-5-22%2Fe4d64fd1-781a-fe3c-9d8b-e7065fc53e6a.mp3">
+      <div class="ep-num">EP <strong>018</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">From Doer to Enabler: Making the Leap to Senior Leadership</h3>
+        <p class="ep-desc">Stepping into a senior leadership role isn’t just about managing more people—it’s about shifting how you think, act, and define success. In this episode of The Manager’s Matrix , Björn Grosso explores the identity transformation required when moving from frontline management to strategic leadership. Learn how to coach instead of solve, drive impact through others, and build systems that scale. Whether you’re on the brink of this transition or already in the deep end, this episode offers clarity, calm, and direction.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">9:15</span>
+        <span>JUN 23, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 018: From Doer to Enabler: Making the Leap to Senior Leadership">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/104361670/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-5-19%2F1e4f2c7c-b4c2-cd14-9470-b79e3636204b.mp3">
+      <div class="ep-num">EP <strong>017</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Make Time for Joy: A Leader’s Guide to Finding Light in the Chaos</h3>
+        <p class="ep-desc">In a world of packed schedules and professional pressure, joy often gets pushed aside. But what if making space for joy could actually make you a better leader, partner, and human? In this episode of The Manager’s Matrix , host Björn Grosso unpacks five powerful, research-based ways to bring more joy into your daily life—even when you’re too busy to breathe.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">8:17</span>
+        <span>JUN 19, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 017: Make Time for Joy: A Leader’s Guide to Finding Light in the Chaos">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/104186071/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-5-16%2F57ecf0d3-19db-bce2-79a4-eefcead60484.mp3">
+      <div class="ep-num">EP <strong>016</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Beyond the Classroom: Making Learning Actually Matter</h3>
+        <p class="ep-desc">Most corporate learning falls flat—not because it’s bad, but because it’s disconnected from what the business really needs. In this episode of The Manager’s Matrix , we’ll explore five powerful strategies to align learning initiatives with your company’s biggest goals. If you’re ready to turn training into transformation, this one’s for you.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">7:54</span>
+        <span>JUN 16, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 016: Beyond the Classroom: Making Learning Actually Matter">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/104002489/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-5-11%2F594e7af8-ad77-df8d-0e8b-f6f3dee3f35f.mp3">
+      <div class="ep-num">EP <strong>015</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Lead Minds, Not Just Metrics: Mental Health as a Leadership Imperative</h3>
+        <p class="ep-desc">Most employees are struggling with mental health—and so are their leaders. In this episode of The Manager’s Matrix , we explore why supporting mental well-being is a leadership responsibility, not an HR checkbox. Learn how to change workplace systems, lead with empathy, and normalize conversations that truly support your team—and yourself.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">6:09</span>
+        <span>JUN 12, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 015: Lead Minds, Not Just Metrics: Mental Health as a Leadership Imperative">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/103837042/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-5-8%2F72dbed91-1fa8-f7bc-fa67-9cabd22895af.mp3">
+      <div class="ep-num">EP <strong>014</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Micro-Mentorship: Big Wins from Small Moments</h3>
+        <p class="ep-desc">Can’t find a formal mentor? You’re not alone—and that’s okay. In this episode of The Manager’s Matrix , discover how micro-mentorship can fill the gap. With a few focused conversations and smart digital strategies, you can access powerful insights without waiting for the perfect mentor to show up. Learn how to identify hidden guides, crowdsource wisdom, and use tech to stay ahead.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">8:10</span>
+        <span>JUN 09, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 014: Micro-Mentorship: Big Wins from Small Moments">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/103181429/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-4-25%2Fc3c1ebc2-1ab7-205b-40c3-e3e14b34bd38.mp3">
+      <div class="ep-num">EP <strong>013</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Talk Like a Leader: Mastering Conversations with the T.A.L.K. Framework</h3>
+        <p class="ep-desc">Whether you’re leading a team meeting, building rapport with clients, or chatting with a friend, great conversations are the heart of strong relationships. In this episode of The Manager’s Matrix , Björn Grosso shares the powerful T.A.L.K. framework—Topic, Asking, Levity, and Kindness—that will sharpen your communication skills and transform the way you connect with others. Tune in for practical insights, real-world examples, and a leadership lens on becoming a better conversationalist.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">5:16</span>
+        <span>JUN 05, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 013: Talk Like a Leader: Mastering Conversations with the T.A.L.K. Framework">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/103181379/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-4-25%2Fcff4cbee-b7c6-46ce-c3ac-3d550a53681c.mp3">
+      <div class="ep-num">EP <strong>012</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Protect Your Team from Strategy Fatigue: Focus Over Frenzy</h3>
+        <p class="ep-desc">When everything feels like a priority, your people burn out—and your strategy loses impact. In this episode of The Manager’s Matrix , we dive into how leaders can guard against strategy fatigue by setting clear guardrails, applying smart prioritization tools, and creating a single source of strategic truth. Learn how to stay focused, energized, and aligned—without killing momentum or morale.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">5:43</span>
+        <span>JUN 02, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 012: Protect Your Team from Strategy Fatigue: Focus Over Frenzy">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/103181340/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-4-25%2Fc78e029e-e6ca-0b27-10d6-bd954f7e7969.mp3">
+      <div class="ep-num">EP <strong>011</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Silent Sabotage: How to Protect Your Reputation When a Peer Undermines You</h3>
+        <p class="ep-desc">When senior leaders clash, the damage can go far beyond ego. Subtle attempts to undermine you—especially through corporate gaslighting—can chip away at your reputation, confidence, and career. In this episode of The Manager’s Matrix , Björn Grosso unpacks how to recognize covert sabotage, build strategic support, and defend your reputation without becoming reactive. If you’ve ever felt quietly targeted or doubted by a peer, this one’s for you.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">6:08</span>
+        <span>MAY 29, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 011: Silent Sabotage: How to Protect Your Reputation When a Peer Undermines You">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/103164040/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-4-25%2F2be09b45-62ce-244a-6a07-43df9cff7ffb.mp3">
+      <div class="ep-num">EP <strong>010</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Beyond Borders: Leading with Cultural Intelligence</h3>
+        <p class="ep-desc">Managing international teams takes more than good intentions—it takes cultural intelligence. In this episode of The Manager’s Matrix , Björn Grosso unpacks how to adapt your leadership style across cultures, redefine psychological safety, balance unity and diversity, and build trust in nuanced ways. If you’re leading across time zones, this one’s for you.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">7:11</span>
+        <span>MAY 26, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 010: Beyond Borders: Leading with Cultural Intelligence">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/102718842/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-4-15%2Fbee2c336-acd0-d9c9-3a96-485bbd5b8109.mp3">
+      <div class="ep-num">EP <strong>009</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Mastering Delegation: Unlock Your Team’s Potential</h3>
+        <p class="ep-desc">Struggling to let go of tasks? You’re not alone. In this episode of The Manager’s Matrix, discover why delegation is a critical leadership skill—and how mastering it empowers your team, boosts productivity, and frees you up to focus on what truly matters. Learn practical steps to overcome common barriers, delegate effectively, and create a culture of trust and autonomy.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">5:59</span>
+        <span>MAY 22, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 009: Mastering Delegation: Unlock Your Team’s Potential">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/102718159/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-4-15%2Ff431ff88-c1f0-0301-4253-e1f27ad234cb.mp3">
+      <div class="ep-num">EP <strong>008</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Art of Intentional Leisure: Mastering Your Free Time</h3>
+        <p class="ep-desc">Feeling drained even after the weekend? In this episode of The Manager’s Matrix , host Björn Grosso explores the concept of leisure crafting —a powerful way to reclaim your free time with intention and clarity. Discover how structured, energizing leisure can boost your creativity, leadership, and well-being. Learn practical ways to design your time off so it restores you, not depletes you.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">8:35</span>
+        <span>MAY 19, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode 008: The Art of Intentional Leisure: Mastering Your Free Time">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/102498583/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-4-11%2Ff1086ead-f0bf-7521-eedb-af1e428359a6.mp3">
+      <div class="ep-num">EP <strong>—</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Grace Under Fire: The Art of Staying Civil When Emotions Boil Over</h3>
+        <p class="ep-desc">In this episode of The Manager’s Matrix , we explore how to stay composed and constructive when tensions rise at work. Discover three essential habits that help you manage emotional reactions, respond with clarity, and maintain civility—even when the heat is on. A practical guide for anyone who wants to lead with calm in a chaotic world.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">7:04</span>
+        <span>MAY 15, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode —: Grace Under Fire: The Art of Staying Civil When Emotions Boil Over">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/101921510/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-3-29%2F83845ab0-98f2-8b8c-c4cf-03f3aa071868.mp3">
+      <div class="ep-num">EP <strong>—</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Courage to Speak: How to Build a Culture Where Every Voice Matters</h3>
+        <p class="ep-desc">In this episode of The Manager’s Matrix , Björn Grosso breaks down what it really takes to create a speak-up culture—where honesty isn’t just welcomed, it’s rewarded. Learn how to ask better questions, respond to tough feedback, and use your influence to amplify quieter voices. Because when people feel safe to speak the truth, performance and trust thrive.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">7:16</span>
+        <span>MAY 12, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode —: The Courage to Speak: How to Build a Culture Where Every Voice Matters">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/102125652/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-4-3%2Fa8a45752-91f4-d52f-cc56-8e9f85e43b86.mp3">
+      <div class="ep-num">EP <strong>—</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Busy Leader&#39;s Escape Plan: 3 Smart Shifts to Reclaim Your Time</h3>
+        <p class="ep-desc">In this episode of The Manager’s Matrix , host Björn Grosso shares three powerful strategies to help busy leaders lighten their workload without sacrificing results. Learn how to redefine what “good enough” means, eliminate low-value tasks that drain time and energy, and set healthy boundaries around your availability to empower your team. These smart, practical shifts are designed to free up your time, boost productivity, and help you lead with more clarity and focus.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">6:22</span>
+        <span>MAY 08, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode —: The Busy Leader&#39;s Escape Plan: 3 Smart Shifts to Reclaim Your Time">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/101685954/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-3-24%2F1c21eb7e-0ef8-93f5-52b3-d3b98efd6ea7.mp3">
+      <div class="ep-num">EP <strong>—</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">The Real Meaning of Psychological Safety: Setting the Record Straight</h3>
+        <p class="ep-desc">In this episode of The Manager’s Matrix , Björn Grosso debunks five common myths about psychological safety—from confusing it with politeness to assuming it guarantees job security. Discover what psychological safety really means and how to foster a culture of honesty, respect, and high performance. Tune in for practical insights that elevate team trust and innovation.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">7:13</span>
+        <span>MAY 05, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode —: The Real Meaning of Psychological Safety: Setting the Record Straight">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/101685830/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-3-24%2F734775d8-992f-59ce-7982-c0d7806c2bad.mp3">
+      <div class="ep-num">EP <strong>—</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Unveiling the Unspoken: Mastering Subtle Feedback for Growth</h3>
+        <p class="ep-desc">In this episode of The Manager’s Matrix , Björn Grosso explores how to spot and respond to the quiet cues that often go unnoticed—subtle feedback. Learn three powerful techniques to uncover hidden insights, create safe spaces for dialogue, and turn quiet signals into growth opportunities. AI-narrated, insight-packed, and ready to sharpen your leadership edge.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">5:27</span>
+        <span>MAY 01, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode —: Unveiling the Unspoken: Mastering Subtle Feedback for Growth">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/101685647/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-3-24%2F2ab24f50-b7b1-e38c-4860-f5cfa68adce5.mp3">
+      <div class="ep-num">EP <strong>—</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">Lead Upward: When Speaking Up Builds Trust</h3>
+        <p class="ep-desc">In this episode of The Manager’s Matrix , Björn Grosso shares how respectfully disagreeing with your boss can actually strengthen trust and show true leadership. Learn how to speak up with purpose, align your message with shared goals, and offer solutions that move the team forward. It’s not about confrontation—it’s about contribution.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">3:56</span>
+        <span>APR 28, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode —: Lead Upward: When Speaking Up Builds Trust">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+
+    <article class="ep" data-audio="https://anchor.fm/s/1040d3630/podcast/play/101685402/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-3-24%2Fe3d1055a-5d2b-1ecd-7861-32deeb1a9411.mp3">
+      <div class="ep-num">EP <strong>—</strong></div>
+      <div class="ep-body">
+        <h3 class="ep-title">AI as Your Career Coach: 5 Ways to Take Charge of Your Growth</h3>
+        <p class="ep-desc">In this pilot episode of The Manager’s Matrix , Björn Grosso explores how AI can become your personal career coach—on demand and in your pocket. Discover five powerful ways to use AI for career clarity, job search strategy, interview prep, and building your personal brand. Practical, inspiring, and AI-supported, this is your first step toward smarter, faster growth.</p>
+      </div>
+      <div class="ep-meta">
+        <span class="dur">5:45</span>
+        <span>APR 24, 2025</span>
+      </div>
+      <button class="ep-play" aria-label="Play episode —: AI as Your Career Coach: 5 Ways to Take Charge of Your Growth">
+        <span class="ic-play"></span>
+        <span class="ic-pause"></span>
+      </button>
+      <div class="ep-player">
+        <div class="scrub"><div class="scrub-fill"></div></div>
+        <div class="time">00:00</div>
+      </div>
+    </article>
+    </div>
+  </div>
+  </div>
+</section>
+
+
+<section class="subscribe" id="subscribe">
+  <div class="frame">
+    <div class="sub-grid">
+      <h2 class="sub-title">Where to <span>Listen.</span></h2>
+      <p class="sub-blurb">
+        New episodes drop every Monday and Friday. Pick the app you already use —
+        the RSS feed is open if you'd rather wire it up yourself.
+      </p>
+    </div>
+    <div class="sub-list">
+      <a href="https://podcasts.apple.com/podcast/the-managers-matrix" class="sub-link" target="_blank" rel="noopener">
+        <span class="sl-num">01</span>
+        <span class="sl-name">Apple Podcasts</span>
+        <span class="sl-desc">The default. Auto-downloads new episodes on iOS.</span>
+        <span class="sl-arrow">Open →</span>
+      </a>
+      <a href="https://open.spotify.com/show/the-managers-matrix" class="sub-link" target="_blank" rel="noopener">
+        <span class="sl-num">02</span>
+        <span class="sl-name">Spotify</span>
+        <span class="sl-desc">If your library already lives there, follow once.</span>
+        <span class="sl-arrow">Open →</span>
+      </a>
+      <a href="https://pca.st/managers-matrix" class="sub-link" target="_blank" rel="noopener">
+        <span class="sl-num">03</span>
+        <span class="sl-name">Pocket Casts</span>
+        <span class="sl-desc">Best on Android. Better playback-speed controls.</span>
+        <span class="sl-arrow">Open →</span>
+      </a>
+      <a href="https://anchor.fm/s/1040d3630/podcast/rss" class="sub-link" target="_blank" rel="noopener">
+        <span class="sl-num">04</span>
+        <span class="sl-name">RSS Feed</span>
+        <span class="sl-desc">Plain XML. Paste into Overcast, Castro, or anything else.</span>
+        <span class="sl-arrow">Copy →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+
+<footer>
+  <div class="frame">
+    <div class="ft-brand">
+      <div class="ft-mark">
+        <svg class="mark" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <rect x="0.5" y="0.5" width="27" height="27" stroke="#82B8E8" stroke-opacity="0.6"/>
+  <line x1="14" y1="0" x2="14" y2="28" stroke="#82B8E8" stroke-opacity="0.4"/>
+  <line x1="0" y1="14" x2="28" y2="14" stroke="#82B8E8" stroke-opacity="0.4"/>
+  <rect x="14" y="0" width="14" height="14" fill="#82B8E8"/>
+</svg>
+        <span class="lockup">The Manager's <span>Matrix</span></span>
+      </div>
+      <p>Short, focused leadership pieces for managers in motion. Created and produced by Bernhard Grohs. Narrated by Björn Grosso.</p>
+    </div>
+    <div class="col">
+      <div class="col-title">Listen</div>
+      <p><a href="#subscribe">Apple Podcasts</a></p>
+      <p><a href="#subscribe">Spotify</a></p>
+      <p><a href="https://anchor.fm/s/1040d3630/podcast/rss" target="_blank" rel="noopener">RSS feed</a></p>
+    </div>
+    <div class="col">
+      <div class="col-title">Read</div>
+      <p><a href="about.html">About the show</a></p>
+      <p><a href="about.html#host">About Bernhard</a></p>
+      <p><a href="about.html#voice">About Björn</a></p>
+    </div>
+    <div class="col">
+      <div class="col-title">Contact</div>
+      <p><a href="mailto:bernhard@grohs.org">bernhard@grohs.org</a></p>
+      <p>© 2026 Bernhard Grohs</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const FEED_URL = 'https://anchor.fm/s/1040d3630/podcast/rss';
+
+  // ---- shared state ----
+  let currentRow = null;
+  let currentAudio = null;
+
+  // ---- utils (mirror of build-time helpers, identical output) ----
+  const esc = (s) => String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const padEp = (n) => n ? String(n).padStart(3,'0') : '—';
+  const MON = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const MON_LC = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const fmtDate = (iso) => {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return '';
+    return MON[d.getMonth()] + ' ' + String(d.getDate()).padStart(2,'0') + ', ' + d.getFullYear();
+  };
+  const fmtMonthYear = (d) => MON_LC[d.getMonth()] + ' ' + d.getFullYear();
+  const fmtDur = (d) => {
+    if (!d) return '';
+    const p = d.split(':').map(s => parseInt(s,10));
+    if (p.length === 3) {
+      const h = p[0], m = p[1], s = p[2];
+      if (h === 0) return m + ':' + String(s).padStart(2,'0');
+      return h + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    }
+    return d;
+  };
+  const cleanDesc = (raw) => {
+    if (!raw) return '';
+    return raw.replace(/\s*Article Reference:\s*https?:\/\/\S+\s*/gi, '').replace(/\s+/g,' ').trim();
+  };
+  const stripTags = (s) => (s || '').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+  const seasonRoman = (n) => ({'1':'I','2':'II','3':'III','4':'IV','5':'V'}[String(n)] || String(n));
+  const fmtTime = (s) => {
+    if (!isFinite(s) || s < 0) return '00:00';
+    return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(Math.floor(s%60)).padStart(2,'0');
+  };
+  const totalMinutes = (eps) => eps.reduce((sum, e) => {
+    if (!e.duration) return sum;
+    const p = e.duration.split(':').map(Number);
+    return sum + (p.length === 3 ? p[0]*60 + p[1] : p[0]);
+  }, 0);
+
+  // ---- audio player wiring (idempotent — safe to call after re-render) ----
+  function stopCurrent(){
+    if (currentAudio) currentAudio.pause();
+    if (currentRow){
+      currentRow.classList.remove('is-open','is-playing');
+      const b = currentRow.querySelector('.ep-play');
+      if (b) b.classList.remove('playing');
+    }
+    currentRow = null;
+    currentAudio = null;
+  }
+
+  function wireAudio(){
+    document.querySelectorAll('.ep').forEach((row) => {
+      const btn = row.querySelector('.ep-play');
+      if (!btn || btn.dataset.wired) return;
+      btn.dataset.wired = '1';
+      const src   = row.dataset.audio;
+      const fill  = row.querySelector('.scrub-fill');
+      const time  = row.querySelector('.ep-player .time');
+      const scrub = row.querySelector('.scrub');
+      let audio = null;
+
+      const ensureAudio = () => {
+        if (audio) return audio;
+        audio = new Audio();
+        audio.preload = 'none';
+        audio.src = src;
+        audio.addEventListener('timeupdate', () => {
+          if (audio.duration && isFinite(audio.duration) && fill) {
+            fill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+          }
+          if (time) time.textContent = fmtTime(audio.currentTime);
+        });
+        audio.addEventListener('ended', () => {
+          row.classList.remove('is-playing');
+          btn.classList.remove('playing');
+        });
+        audio.addEventListener('error', () => { if (time) time.textContent = 'ERROR'; });
+        return audio;
+      };
+
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (currentRow === row && currentAudio && !currentAudio.paused){
+          currentAudio.pause();
+          row.classList.remove('is-playing');
+          btn.classList.remove('playing');
+          return;
+        }
+        if (currentRow && currentRow !== row) stopCurrent();
+        const a = ensureAudio();
+        row.classList.add('is-open','is-playing');
+        btn.classList.add('playing');
+        a.play().catch(() => {});
+        currentRow = row;
+        currentAudio = a;
+      });
+
+      if (scrub) scrub.addEventListener('click', (e) => {
+        if (!audio || !audio.duration || !isFinite(audio.duration)) return;
+        const r = scrub.getBoundingClientRect();
+        const pct = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+        audio.currentTime = pct * audio.duration;
+      });
+    });
+  }
+
+  function wireSeasonPicker(){
+    const sel = document.getElementById('seasonSelect');
+    if (!sel || sel.dataset.wired) return;
+    sel.dataset.wired = '1';
+    sel.addEventListener('change', () => {
+      const v = sel.value;
+      document.querySelectorAll('.season-group').forEach(g => {
+        g.classList.toggle('is-active', g.dataset.season === v);
+      });
+      stopCurrent();
+    });
+  }
+
+  function wireLatestCta(){
+    const cta = document.getElementById('latestPlay');
+    if (!cta || cta.dataset.wired) return;
+    cta.dataset.wired = '1';
+    cta.addEventListener('click', () => {
+      const first = document.querySelector('.season-group.is-active .ep') || document.querySelector('.ep');
+      if (!first) return;
+      first.scrollIntoView({behavior:'smooth', block:'center'});
+      setTimeout(() => {
+        const b = first.querySelector('.ep-play');
+        if (b && !b.classList.contains('playing')) b.click();
+      }, 500);
+    });
+  }
+
+  // ---- RSS parse + render (mirrors build script output) ----
+  function parseFeed(xmlText){
+    const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+    if (doc.querySelector('parsererror')) return null;
+    const ITUNES = 'http://www.itunes.com/dtds/podcast-1.0.dtd';
+    const items = Array.from(doc.querySelectorAll('item'));
+    const get = (it, tag) => {
+      const el = it.querySelector(tag);
+      return el ? (el.textContent || '').trim() : '';
+    };
+    const getNS = (it, tag) => {
+      const el = it.getElementsByTagNameNS(ITUNES, tag)[0];
+      return el ? (el.textContent || '').trim() : '';
+    };
+    const eps = items.map((it) => {
+      const titleRaw = get(it, 'title');
+      const nm = titleRaw.match(/^#?\s*(\d+)\s*[-–:]?\s*(.*)$/);
+      const num   = nm ? parseInt(nm[1], 10) : null;
+      const title = nm ? nm[2].trim() : titleRaw;
+      const enc   = it.querySelector('enclosure');
+      return {
+        num,
+        title,
+        description: stripTags(get(it, 'description')),
+        pubDate: get(it, 'pubDate'),
+        duration: getNS(it, 'duration'),
+        season:   getNS(it, 'season'),
+        audio:    enc ? (enc.getAttribute('url') || '') : '',
+      };
+    });
+    eps.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+    return eps;
+  }
+
+  function groupBySeason(eps){
+    const tagged = eps.filter(e => e.season);
+    const ranges = {};
+    tagged.forEach(e => {
+      const t = new Date(e.pubDate).getTime();
+      if (!ranges[e.season]) ranges[e.season] = {min: t, max: t};
+      ranges[e.season].min = Math.min(ranges[e.season].min, t);
+      ranges[e.season].max = Math.max(ranges[e.season].max, t);
+    });
+    const assign = (e) => {
+      if (e.season) return e.season;
+      const t = new Date(e.pubDate).getTime();
+      let best = null, bestDist = Infinity;
+      Object.entries(ranges).forEach(([s, r]) => {
+        if (t >= r.min && t <= r.max) { best = s; bestDist = -1; return; }
+        const d = Math.min(Math.abs(t - r.min), Math.abs(t - r.max));
+        if (d < bestDist) { bestDist = d; best = s; }
+      });
+      return best || '1';
+    };
+    const g = {};
+    eps.forEach(e => { const s = assign(e); (g[s] = g[s] || []).push(e); });
+    return g;
+  }
+
+  function renderEp(e){
+    const desc = cleanDesc(e.description);
+    return ''
+      + '<article class="ep" data-audio="' + esc(e.audio) + '">'
+      +   '<div class="ep-num">EP <strong>' + padEp(e.num) + '</strong></div>'
+      +   '<div class="ep-body">'
+      +     '<h3 class="ep-title">' + esc(e.title) + '</h3>'
+      +     '<p class="ep-desc">' + esc(desc) + '</p>'
+      +   '</div>'
+      +   '<div class="ep-meta">'
+      +     '<span class="dur">' + esc(fmtDur(e.duration)) + '</span>'
+      +     '<span>' + esc(fmtDate(e.pubDate)) + '</span>'
+      +   '</div>'
+      +   '<button class="ep-play" aria-label="Play episode ' + padEp(e.num) + ': ' + esc(e.title) + '">'
+      +     '<span class="ic-play"></span><span class="ic-pause"></span>'
+      +   '</button>'
+      +   '<div class="ep-player">'
+      +     '<div class="scrub"><div class="scrub-fill"></div></div>'
+      +     '<div class="time">00:00</div>'
+      +   '</div>'
+      + '</article>';
+  }
+
+  function renderSeasonGroup(s, eps, isActive){
+    const totalMin = totalMinutes(eps);
+    const hours = Math.floor(totalMin / 60), mins = totalMin % 60;
+    const totalLabel = hours > 0 ? (hours + 'h ' + mins + 'm') : (mins + 'm');
+    const dates = eps.map(e => new Date(e.pubDate)).sort((a,b) => a - b);
+    const dateRange = fmtMonthYear(dates[0]) + ' → ' + fmtMonthYear(dates[dates.length-1]);
+    return ''
+      + '<div class="season-group' + (isActive ? ' is-active' : '') + '" data-season="' + esc(s) + '">'
+      +   '<div class="sg-head">'
+      +     '<div class="sg-num"><small>SEASON</small>' + seasonRoman(s) + '</div>'
+      +     '<div class="sg-meta">'
+      +       '<div><span class="strong">' + eps.length + ' episodes</span> · ' + esc(totalLabel) + ' total</div>'
+      +       '<div>' + esc(dateRange) + '</div>'
+      +     '</div>'
+      +   '</div>'
+      +   '<div class="ep-list">' + eps.map(renderEp).join('') + '</div>'
+      + '</div>';
+  }
+
+  // ---- apply parsed feed to DOM ----
+  function applyEpisodes(eps){
+    if (!eps || !eps.length) return;
+
+    const grouped = groupBySeason(eps);
+    const keys = Object.keys(grouped).sort((a, b) => Number(b) - Number(a));
+    const defaultSeason = keys[0];
+
+    // 1) season select
+    const sel = document.getElementById('seasonSelect');
+    if (sel) {
+      sel.innerHTML = keys.map(s =>
+        '<option value="' + esc(s) + '"' + (s === defaultSeason ? ' selected' : '') + '>Season ' + seasonRoman(s) + ' — ' + grouped[s].length + ' episodes</option>'
+      ).join('');
+    }
+
+    // 2) season groups — remove existing and append fresh
+    const archiveFrame = document.querySelector('#archive .frame');
+    if (archiveFrame) {
+      archiveFrame.querySelectorAll('.season-group').forEach(g => g.remove());
+      const html = keys.map(s => renderSeasonGroup(s, grouped[s], s === defaultSeason)).join('');
+      archiveFrame.insertAdjacentHTML('beforeend', html);
+    }
+
+    // 3) hero stats
+    const total = eps.length;
+    const totalMin = totalMinutes(eps);
+    const totalHours = Math.round(totalMin / 60);
+    const avgMin = Math.round(totalMin / total);
+    const statEls = document.querySelectorAll('.hero-meta .stat .num');
+    if (statEls[0]) statEls[0].textContent = String(total);
+    if (statEls[1]) statEls[1].textContent = '~' + totalHours + 'h';
+    if (statEls[3]) statEls[3].textContent = '~' + avgMin + 'm';
+    const eyebrowRight = document.querySelector('.hero-eyebrow > span.mono');
+    if (eyebrowRight) eyebrowRight.textContent = total + ' Episodes · ~' + totalHours + 'h total';
+
+    // 4) latest episode card
+    const latest = eps[0];
+    const lEyebrow = document.querySelector('.latest .l-eyebrow');
+    const lTitle   = document.querySelector('.latest .l-title');
+    const lMeta    = document.querySelector('.latest .l-meta');
+    if (lEyebrow) lEyebrow.textContent = '▸ Now playing — Episode ' + padEp(latest.num);
+    if (lTitle)   lTitle.textContent   = latest.title;
+    if (lMeta)    lMeta.textContent    = fmtDur(latest.duration) + ' · ' + fmtDate(latest.pubDate);
+
+    // 5) re-wire (idempotent — only attaches to new nodes)
+    wireAudio();
+    wireSeasonPicker();
+  }
+
+  async function refreshFromRss(){
+    try {
+      const res = await fetch(FEED_URL, { cache: 'no-cache' });
+      if (!res.ok) return;
+      const xml = await res.text();
+      const eps = parseFeed(xml);
+      if (eps && eps.length) {
+        applyEpisodes(eps);
+        // tiny status line in footer (added once)
+        let stamp = document.getElementById('rssStamp');
+        if (!stamp) {
+          const ftBrand = document.querySelector('footer .ft-brand');
+          if (ftBrand) {
+            stamp = document.createElement('p');
+            stamp.id = 'rssStamp';
+            stamp.style.cssText = 'margin-top:14px;font-size:10px;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;';
+            ftBrand.appendChild(stamp);
+          }
+        }
+        if (stamp) {
+          const now = new Date();
+          stamp.textContent = 'Live from RSS · synced ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+        }
+      }
+    } catch (err) {
+      console.warn("[Manager's Matrix] RSS refresh failed, keeping baked content:", err);
+    }
+  }
+
+  // ---- boot ----
+  document.addEventListener('DOMContentLoaded', () => {
+    wireAudio();
+    wireSeasonPicker();
+    wireLatestCta();
+    refreshFromRss();
+  });
+})();
+</script>
+
+</body>
+</html>
 
