@@ -1,0 +1,128 @@
+{
+  "_README": "Edit the site copy here, then run: node _build/build.js  (from the managers-matrix-site folder). Light inline HTML is allowed: <strong> for bold, <em> for the gold highlight, <a href> for links. Standalone quote fields (book.quote, bookTeaser.quote, book.dedication) are plain text; the quotation marks are added automatically. Use {episodes} as a placeholder for the live episode count.",
+
+  "hero": {
+    "kicker": "The Podcast",
+    "sub": "<strong>Short, focused leadership pieces for managers in motion.</strong> Built around the challenges modern leaders face every day, narrated with warm, cinematic storytelling and zero buzzwords.",
+    "playLabel": "Play Latest Episode",
+    "browseLabel": "Browse the Archive →",
+    "coverBadge": "Strategy · Leadership"
+  },
+
+  "marquee": ["STRATEGY", "LEADERSHIP", "PERFORMANCE", "IMPACT"],
+
+  "stats": {
+    "newDrops": "2×/wk"
+  },
+
+  "archiveHeading": "THE <em>ARCHIVE</em>",
+
+  "bookTeaser": {
+    "kicker": "Also available, the novel",
+    "heading": "THE STORY NO ONE TELLS YOU <em>BEFORE YOU TAKE THE ROLE.</em>",
+    "quote": "A rare book that captures what leadership actually feels like from the inside.",
+    "cta": "Read About the Book →"
+  },
+
+  "subscribe": {
+    "heading": "WHERE TO <em>LISTEN</em>",
+    "note": "New drops every Mon & Fri",
+    "links": [
+      { "name": "Apple Podcasts", "url": "https://podcasts.apple.com/podcast/the-managers-matrix", "desc": "The default. Auto-downloads new episodes on iOS.", "action": "Open →" },
+      { "name": "Spotify", "url": "https://open.spotify.com/show/the-managers-matrix", "desc": "If your library already lives there, follow once.", "action": "Open →" },
+      { "name": "Pocket Casts", "url": "https://pca.st/managers-matrix", "desc": "Best on Android. Better playback-speed controls.", "action": "Open →" },
+      { "name": "RSS Feed", "url": "https://anchor.fm/s/1040d3630/podcast/rss", "desc": "Plain XML. Paste into Overcast, Castro, or anything else.", "action": "Copy →" }
+    ]
+  },
+
+  "footer": {
+    "brand": "Strategy. Leadership. Performance. Impact. Short, focused leadership pieces for managers in motion. Created and produced by Bernhard Grohs. Narrated by Björn Grosso."
+  },
+
+  "about": {
+    "kicker": "About",
+    "readingTime": "~ 5 min read",
+    "heroSub": "A leadership podcast built around short, focused knowledge pieces on the challenges modern leaders face every day, created by <strong>Bernhard Grohs</strong> and narrated by <strong>Björn Grosso</strong>.",
+    "heading": "WHY THIS <em>PODCAST</em> EXISTS.",
+    "pullQuote": "Built for managers in motion, who don't have time for buzzwords but still want to think hard about the work.",
+    "meta": [
+      ["Host", "Bernhard Grohs"],
+      ["Voice", "Björn Grosso (AI)"],
+      ["Cadence", "Mon & Fri"],
+      ["Length", "~15-25 min"],
+      ["Episodes", "{episodes} & counting"],
+      ["Language", "English"]
+    ],
+    "sections": [
+      {
+        "h3": "The Premise",
+        "p": [
+          "Most management content is either too abstract to apply on a Tuesday morning or too tactical to teach you anything new. <strong>The Manager's Matrix</strong> sits in the middle: short, focused pieces, usually fifteen to twenty-five minutes, that take one real situation a manager faces and walk it down to something you can actually do.",
+          "The show organizes everything around four pillars: <strong>strategy, leadership, performance, and impact</strong>. Every episode lives at the intersection of at least two of them, which is also where most real management decisions actually happen."
+        ]
+      },
+      {
+        "h3": "The Host",
+        "id": "host",
+        "p": [
+          "<strong>Bernhard Grohs</strong> is a leadership writer based in Vienna. He's been a manager for fifteen years across early-stage startups, consultancies, and product teams. The podcast is the writing he doesn't have time to publish as essays, turned into a format you can listen to on the way to your next 1:1.",
+          "The episodes draw on his own day-to-day mistakes, public research from people like the HBR contributors he cites in the show notes, and the kind of frank conversations that usually only happen between trusted peers."
+        ]
+      },
+      {
+        "h3": "The Voice: Björn Grosso",
+        "id": "voice",
+        "p": [
+          "Each episode is narrated by <strong>Björn Grosso</strong>, an AI voice cloned and tuned to deliver the material with the warm, cinematic storytelling the format calls for. Björn is not a real person; he's a production choice. The decision was deliberate: an AI narrator lets the show ship two episodes a week without sacrificing the careful writing that goes into each one.",
+          "The ideas, the writing, and the editorial judgement are all human. Björn is the read."
+        ]
+      },
+      {
+        "h3": "How it's Made",
+        "p": [
+          "Each episode begins as a written script, usually responding to a piece of research, a leadership article, or a moment from the host's week. The draft gets a structural pass for pacing and a line edit for voice, then runs through the production pipeline that generates Björn's read, the cold-open, and the chapter markers."
+        ]
+      },
+      {
+        "h3": "Get in Touch",
+        "p": [
+          "Episode ideas, corrections, gentle disagreements, and warm hellos all welcome at <a href=\"mailto:bernhard@grohs.org\" class=\"inline-gold\">bernhard@grohs.org</a>. For press and speaking, same address; please put “press” in the subject so it doesn't get lost."
+        ]
+      }
+    ]
+  },
+
+  "book": {
+    "kicker": "The Novel",
+    "subtitle": "Leadership in the Age of Change",
+    "getLabel": "Get the Book →",
+    "lookInsideLabel": "Look Inside ↓",
+    "quote": "A rare book that captures what leadership actually feels like from the inside.",
+    "bodyHeading": "WHAT HAPPENS WHEN THE BIGGEST TRANSFORMATION ISN'T <em>DIGITAL, BUT PERSONAL?</em>",
+    "lead": "<em>The Manager's Matrix</em> follows an IT leader navigating the gap between how organizations talk about leadership and how it actually feels day to day.",
+    "paras": [
+      "Through the lens of business fiction, it explores the tensions every leader carries: between <strong>confidence and doubt</strong>, <strong>passion and restraint</strong>, <strong>vision and reality</strong>.",
+      "We meet Björn Grosso, a capable, respected leader standing at a professional crossroads. After years of excelling as the reliable expert and fixer, he joins a new company with a different culture, different expectations, and a team he didn't choose and didn't build. From day one he steps into a room where loyalties have already formed and every eye is silently asking: <em>“Who are you, and why should we follow you?”</em>",
+      "The challenges he faces aren't about tasks anymore; they're about transformation. The very things that once made him successful (quick problem-solving, hands-on execution, relentless availability) have quietly become liabilities. It's not a ladder he's climbing. It's a matrix.",
+      "<strong>This is not a management textbook. This is the story no one tells you before you take the role.</strong>"
+    ],
+    "contentsLabel": "Contents · 10 Chapters",
+    "chapters": [
+      "Prologue",
+      "Inherited Fire",
+      "The Delegation Dilemma",
+      "The Invisible Promotion",
+      "The Subtraction Strategy",
+      "Relevance at Risk",
+      "Strategic Silence",
+      "Making Time for Joy",
+      "The Executive Matrix",
+      "Lessons Along the Way"
+    ],
+    "ctaHeading": "READ THE STORY BEHIND <em>THE PODCAST.</em>",
+    "ctaText": "First edition. Available in print. Reach out for ordering details, review copies, or bulk requests for your leadership team.",
+    "orderLabel": "Order & Enquiries →",
+    "listenLabel": "Listen to the Podcast →",
+    "dedication": "For Isabella, who reminds me that leadership begins at home."
+  }
+}

@@ -1,0 +1,972 @@
+// Build the showsite from _build/episodes.json - BOLD / MAXIMALIST theme.
+// Usage: node _build/build.js  (run from managers-matrix-site/)
+const fs = require('fs');
+const path = require('path');
+
+const ROOT = path.dirname(__dirname);
+const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'episodes.json'), 'utf8'));
+// Editable site copy lives in content.json (no em dashes; see _README in that file).
+const C = JSON.parse(fs.readFileSync(path.join(__dirname, 'content.json'), 'utf8'));
+
+// ---------- helpers ----------
+const esc = (s) => String(s || '')
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+// strip em dashes from dynamic feed text, replacing with a comma for readability
+const deDash = (s) => String(s || '').replace(/\s*\u2014\s*/g, ', ');
+const tokens = (s) => String(s || '').replace(/\{episodes\}/g, String(data.episodes.length));
+const fmtDate = (iso) => {
+  if (!iso) return '';
+  const d = new Date(iso); if (isNaN(d)) return '';
+  const M = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  return `${M[d.getMonth()]} ${String(d.getDate()).padStart(2,'0')}, ${d.getFullYear()}`;
+};
+const fmtDur = (d) => {
+  if (!d) return '';
+  const p = d.split(':').map(s => parseInt(s, 10));
+  if (p.length === 3) {
+    const [h, m, s] = p;
+    return h === 0
+      ? `${m}:${String(s).padStart(2,'0')}`
+      : `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+  return d;
+};
+const cleanDesc = (raw) => !raw ? '' : raw
+  .replace(/\s*Article Reference:\s*https?:\/\/\S+\s*/gi, '')
+  .replace(/\s+/g, ' ').trim();
+const padEp = (n) => n ? String(n).padStart(3, '0') : '-';
+const roman = (n) => ({'1':'I','2':'II','3':'III','4':'IV','5':'V'}[String(n)] || String(n));
+
+// ---------- CSS ----------
+const CSS = `
+:root{
+  /* Dark, dramatic navy - the maximalist canvas */
+  --bg:       #0A1628;
+  --bg-2:     #0E1F38;
+  --bg-3:     #15294A;
+  --panel:    #0C1C36;
+  /* Gold accent (from cover) */
+  --gold:     #D4AF5A;
+  --gold-2:   #E8CC83;
+  --gold-deep:#B0892F;
+  /* Cream / text */
+  --cream:    #F5EEDA;
+  --text-2:   #AEB7CA;
+  --text-3:   #6B7791;
+  /* Lines */
+  --line:     rgba(212,175,90,0.20);
+  --line-2:   rgba(245,238,218,0.10);
+  --line-3:   rgba(245,238,218,0.06);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;}
+html,body{background:var(--bg);color:var(--cream);}
+body{
+  font-family:'Archivo',system-ui,sans-serif;
+  font-weight:400;line-height:1.55;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;min-height:100vh;position:relative;
+}
+/* faint blueprint grid, the matrix */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(to right, var(--line-3) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line-3) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+/* gold vignette glow top-right */
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(1200px 600px at 88% -10%, rgba(212,175,90,0.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(212,175,90,0.06), transparent 60%);
+}
+main,header,footer{position:relative;z-index:1;}
+
+::selection{background:var(--gold);color:var(--bg);}
+a{color:inherit;text-decoration:none;}
+
+.frame{max-width:1340px;margin:0 auto;padding:0 40px;position:relative;}
+
+.mono{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);
+}
+
+/* ---------- reveal animation ---------- */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);}
+.reveal.in{opacity:1;transform:none;}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  .reveal{opacity:1;transform:none;transition:none;}
+  .marquee__track{animation:none !important;}
+}
+
+/* ---------- nav ---------- */
+.nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(10,22,40,0.82);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line-2);
+}
+.nav .frame{display:flex;align-items:center;justify-content:space-between;height:72px;gap:24px;}
+.brand{display:flex;align-items:center;gap:14px;}
+.brand .mark{width:34px;height:34px;flex-shrink:0;}
+.brand .lockup{
+  font-family:'Archivo',sans-serif;font-weight:900;font-size:14px;
+  letter-spacing:.04em;text-transform:uppercase;line-height:1;color:var(--cream);
+}
+.brand .lockup .g{color:var(--gold);}
+.nav-links{display:flex;gap:34px;align-items:center;}
+.nav-links a{
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--text-2);transition:color .2s ease;
+  position:relative;padding:8px 0;
+}
+.nav-links a:hover,.nav-links a[aria-current="page"]{color:var(--gold);}
+.nav-links a[aria-current="page"]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--gold);}
+.nav-cta{
+  font-family:'Archivo',sans-serif;font-weight:800;font-size:11px;
+  letter-spacing:.16em;text-transform:uppercase;
+  background:var(--gold);color:var(--bg);padding:13px 22px;border-radius:2px;
+  border:1px solid var(--gold);transition:all .2s ease;
+}
+.nav-cta:hover{background:transparent;color:var(--gold);}
+
+/* ---------- HERO ---------- */
+.hero{padding:80px 0 0;position:relative;overflow:hidden;}
+.hero-grid{
+  display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center;
+  padding-bottom:64px;
+}
+.hero-kicker{
+  display:flex;gap:20px;align-items:center;margin-bottom:30px;
+}
+.hero-kicker .tag{
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--gold);
+  border:1px solid var(--line);padding:7px 12px;border-radius:2px;
+}
+.hero-kicker .dim{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-3);}
+
+.hero-title{
+  font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;
+  line-height:.82;letter-spacing:-.03em;
+}
+.hero-title .l1{display:block;font-size:clamp(20px,2.4vw,30px);font-weight:800;letter-spacing:.12em;color:var(--text-2);margin-bottom:.4em;margin-left:.18em;}
+.hero-title .l2{display:block;font-size:clamp(56px,8.6vw,134px);color:var(--cream);}
+.hero-title .l3{
+  display:block;font-size:clamp(72px,11.6vw,188px);color:var(--gold);
+  letter-spacing:-.02em;
+  text-shadow:0 0 60px rgba(212,175,90,.25);
+}
+.hero-sub{
+  margin-top:34px;max-width:560px;font-size:clamp(16px,1.4vw,19px);
+  line-height:1.55;color:var(--text-2);
+}
+.hero-sub strong{color:var(--cream);font-weight:600;}
+.hero-actions{margin-top:38px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
+.btn-gold{
+  display:inline-flex;align-items:center;gap:12px;
+  background:var(--gold);color:var(--bg);
+  font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;
+  letter-spacing:.12em;text-transform:uppercase;
+  padding:16px 26px;border-radius:2px;border:1px solid var(--gold);cursor:pointer;
+  transition:transform .2s ease, background .2s ease, color .2s ease;
+}
+.btn-gold:hover{transform:translateY(-2px);background:var(--gold-2);}
+.btn-gold .tri{width:0;height:0;border-left:10px solid currentColor;border-top:6px solid transparent;border-bottom:6px solid transparent;}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--cream);
+  padding:16px 24px;border-radius:2px;border:1px solid var(--line-2);
+  transition:border-color .2s ease, color .2s ease;
+}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+
+/* cover art, framed with gold + offset block */
+.hero-cover{position:relative;justify-self:center;width:100%;max-width:440px;}
+.hero-cover .frame-block{position:absolute;inset:0;transform:translate(18px,18px);border:1px solid var(--gold);border-radius:4px;}
+.hero-cover img{
+  position:relative;width:100%;display:block;border-radius:4px;
+  border:1px solid var(--line);box-shadow:0 40px 90px -30px rgba(0,0,0,.7);
+}
+.hero-cover .badge{
+  position:absolute;left:-18px;top:24px;z-index:2;
+  background:var(--gold);color:var(--bg);
+  font-family:'Archivo',sans-serif;font-weight:900;font-size:11px;
+  letter-spacing:.18em;text-transform:uppercase;padding:9px 14px;border-radius:2px;
+  box-shadow:0 10px 30px -8px rgba(0,0,0,.6);
+}
+
+/* giant chess-king watermark behind hero */
+.hero-king{
+  position:absolute;right:-60px;bottom:-80px;width:520px;max-width:46vw;
+  color:var(--gold);opacity:.05;z-index:0;pointer-events:none;
+}
+
+/* ---------- marquee ---------- */
+.marquee{
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:var(--panel);overflow:hidden;white-space:nowrap;
+}
+.marquee__track{display:inline-flex;align-items:center;will-change:transform;animation:marq 28s linear infinite;}
+.marquee:hover .marquee__track{animation-play-state:paused;}
+.marquee span{
+  font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:clamp(18px,2.2vw,30px);letter-spacing:.06em;color:var(--cream);
+  padding:18px 0;
+}
+.marquee .star{color:var(--gold);padding:0 30px;font-size:clamp(14px,1.6vw,20px);}
+.marquee .hollow{color:transparent;-webkit-text-stroke:1px var(--gold);}
+@keyframes marq{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ---------- stats ---------- */
+.stats{padding:64px 0;border-bottom:1px solid var(--line-2);}
+.stats .frame{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;}
+.stat{border-left:2px solid var(--gold);padding-left:20px;}
+.stat .num{font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(34px,4vw,56px);line-height:1;color:var(--gold);letter-spacing:-.02em;}
+.stat .lbl{margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-3);}
+
+/* ---------- section header ---------- */
+.section{padding:96px 0;position:relative;}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:48px;}
+.section-head .title{
+  font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;
+  font-size:clamp(40px,6vw,86px);line-height:.9;letter-spacing:-.025em;color:var(--cream);
+}
+.section-head .title em{font-style:normal;color:var(--gold);}
+.section-head .num-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-3);text-align:right;}
+
+/* season picker */
+.season-picker{display:inline-flex;align-items:center;gap:14px;}
+.season-picker .picker-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-3);}
+.season-select{position:relative;display:inline-flex;align-items:center;}
+.season-select select{
+  appearance:none;-webkit-appearance:none;background:var(--bg-2);
+  border:1px solid var(--line);color:var(--cream);
+  font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;
+  letter-spacing:.04em;text-transform:uppercase;
+  padding:12px 40px 12px 16px;border-radius:2px;cursor:pointer;outline:none;
+  transition:border-color .2s ease;
+}
+.season-select select:hover,.season-select select:focus{border-color:var(--gold);}
+.season-select select option{background:var(--bg);color:var(--cream);}
+.season-select .chev{position:absolute;right:15px;top:50%;transform:translateY(-50%);pointer-events:none;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--gold);}
+
+/* season group */
+.season-group{display:none;}
+.season-group.is-active{display:block;}
+.season-group .sg-head{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0 24px;border-bottom:1px solid var(--line-2);margin-bottom:8px;}
+.season-group .sg-num{font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(40px,6vw,68px);line-height:1;color:var(--gold);letter-spacing:-.02em;}
+.season-group .sg-num small{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--text-3);margin-right:14px;font-weight:500;vertical-align:8px;}
+.season-group .sg-meta{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);text-align:right;line-height:1.8;}
+.season-group .sg-meta .strong{color:var(--cream);}
+
+/* ---------- episode rows (maximalist) ---------- */
+.ep{
+  display:grid;grid-template-columns:150px 1fr 150px 60px;gap:28px;
+  padding:30px 0;border-bottom:1px solid var(--line-2);
+  align-items:center;position:relative;transition:background .25s ease;
+}
+.ep:hover{background:linear-gradient(90deg, rgba(212,175,90,0.06), transparent 70%);}
+.ep .ep-bignum{
+  font-family:'Archivo',sans-serif;font-weight:900;font-size:64px;line-height:.9;
+  letter-spacing:-.04em;color:transparent;-webkit-text-stroke:1.4px var(--gold-deep);
+  transition:-webkit-text-stroke-color .25s ease, color .25s ease;
+}
+.ep:hover .ep-bignum{color:var(--gold);-webkit-text-stroke-color:var(--gold);}
+.ep .ep-bignum small{display:block;font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:.2em;color:var(--text-3);-webkit-text-stroke:0;margin-bottom:4px;}
+.ep-body{min-width:0;}
+.ep-title{font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;line-height:1.22;letter-spacing:-.01em;color:var(--cream);margin-bottom:8px;transition:color .2s ease;}
+.ep:hover .ep-title{color:var(--gold-2);}
+.ep-desc{font-size:14px;line-height:1.55;color:var(--text-2);max-width:64ch;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.ep-meta{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);text-align:right;line-height:1.9;}
+.ep-meta .dur{color:var(--gold);display:block;font-weight:500;}
+.ep-play{
+  width:50px;height:50px;border-radius:50%;background:transparent;
+  border:1.5px solid var(--gold);color:var(--gold);
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:all .2s ease;justify-self:end;
+}
+.ep-play:hover,.ep-play.playing{background:var(--gold);color:var(--bg);transform:scale(1.08);box-shadow:0 0 0 6px rgba(212,175,90,.12);}
+.ep-play .ic-play{width:0;height:0;border-left:11px solid currentColor;border-top:7px solid transparent;border-bottom:7px solid transparent;margin-left:3px;}
+.ep-play .ic-pause{display:none;width:12px;height:14px;position:relative;}
+.ep-play .ic-pause::before,.ep-play .ic-pause::after{content:"";position:absolute;top:0;bottom:0;width:4px;background:currentColor;}
+.ep-play .ic-pause::before{left:0;}.ep-play .ic-pause::after{right:0;}
+.ep-play.playing .ic-play{display:none;}
+.ep-play.playing .ic-pause{display:block;}
+.ep-player{grid-column:1 / -1;display:none;margin-top:18px;padding-top:18px;border-top:1px dashed var(--line-2);}
+.ep.is-open .ep-player{display:grid;grid-template-columns:1fr 66px;gap:18px;align-items:center;}
+.scrub{height:5px;background:var(--bg-3);position:relative;cursor:pointer;border-radius:3px;overflow:hidden;}
+.scrub-fill{height:100%;background:var(--gold);width:0;transition:width .1s linear;}
+.ep-player .time{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);text-align:right;letter-spacing:.04em;}
+
+/* ---------- subscribe ---------- */
+.subscribe .sub-list{margin-top:8px;}
+.sub-link{
+  display:grid;grid-template-columns:54px 1.1fr 2fr auto;gap:28px;
+  padding:28px 0;border-bottom:1px solid var(--line-2);align-items:center;
+  transition:padding .25s ease, background .25s ease;
+}
+.sub-link:hover{background:linear-gradient(90deg, rgba(212,175,90,0.06), transparent 70%);padding-left:18px;padding-right:18px;}
+.sub-link .sl-num{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);letter-spacing:.1em;}
+.sub-link .sl-name{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;font-size:28px;letter-spacing:-.01em;color:var(--cream);line-height:1;transition:color .2s ease;}
+.sub-link:hover .sl-name{color:var(--gold);}
+.sub-link .sl-desc{font-size:14px;color:var(--text-2);line-height:1.5;}
+.sub-link .sl-arrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-3);transition:transform .25s ease,color .25s ease;}
+.sub-link:hover .sl-arrow{transform:translateX(8px);color:var(--gold);}
+
+/* ---------- book teaser (on index) ---------- */
+.book-teaser{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.book-teaser .frame{display:grid;grid-template-columns:.8fr 1.2fr;gap:64px;align-items:center;padding-top:88px;padding-bottom:88px;}
+.book-teaser .bt-cover{position:relative;justify-self:center;width:100%;max-width:300px;}
+.book-teaser .bt-cover .frame-block{position:absolute;inset:0;transform:translate(-16px,16px);border:1px solid var(--gold);}
+.book-teaser .bt-cover img{position:relative;width:100%;display:block;box-shadow:0 40px 80px -28px rgba(0,0,0,.7);border:1px solid var(--line);}
+.book-teaser .bt-kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:22px;}
+.book-teaser h2{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(34px,4.6vw,60px);line-height:.94;letter-spacing:-.02em;color:var(--cream);margin-bottom:24px;}
+.book-teaser h2 em{font-style:normal;color:var(--gold);}
+.book-teaser .bt-quote{font-family:'Fraunces',serif;font-style:italic;font-size:20px;line-height:1.5;color:var(--text-2);max-width:54ch;margin-bottom:30px;}
+
+/* ---------- footer ---------- */
+footer{padding:72px 0 80px;border-top:1px solid var(--line);}
+footer .frame{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;align-items:start;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);line-height:1.9;}
+footer .ft-brand .ft-mark{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+footer .ft-brand .ft-mark .lockup{font-family:'Archivo',sans-serif;font-weight:900;font-size:13px;letter-spacing:.04em;color:var(--cream);}
+footer .ft-brand .ft-mark .lockup .g{color:var(--gold);}
+footer .ft-brand p{color:var(--text-2);text-transform:none;letter-spacing:.02em;font-size:12px;line-height:1.65;max-width:320px;font-family:'Archivo',sans-serif;}
+footer .col-title{color:var(--gold);margin-bottom:14px;font-weight:600;}
+footer a{color:var(--text-2);transition:color .2s ease;}
+footer a:hover{color:var(--gold);}
+
+/* ---------- about page ---------- */
+.about-hero{padding:88px 0 64px;border-bottom:1px solid var(--line-2);}
+.about-grid{padding:88px 0;}
+.about-grid > .frame{display:grid;grid-template-columns:minmax(300px,5fr) minmax(0,7fr);gap:80px;align-items:start;}
+.about-grid .col-side{position:sticky;top:96px;align-self:start;}
+.about-grid .col-main{min-width:0;}
+.about-grid h2{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(32px,4vw,52px);line-height:.96;letter-spacing:-.02em;margin-bottom:36px;color:var(--cream);}
+.about-grid h2 em{font-style:normal;color:var(--gold);}
+.about-grid h3{font-family:'Archivo',sans-serif;font-weight:800;text-transform:uppercase;font-size:14px;letter-spacing:.18em;color:var(--gold);margin:52px 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line-2);}
+.about-grid h3:first-child{margin-top:0;}
+.about-grid p{font-size:17px;line-height:1.75;color:var(--text-2);margin-bottom:18px;max-width:64ch;}
+.about-grid p strong{color:var(--cream);font-weight:600;}
+.about-grid a.inline-gold{color:var(--gold);border-bottom:1px solid var(--gold);}
+.about-grid .pull-quote{font-family:'Fraunces',serif;font-style:italic;font-size:28px;line-height:1.3;color:var(--cream);border-left:3px solid var(--gold);padding:6px 0 6px 26px;margin:36px 0;max-width:56ch;}
+.cover-card{position:relative;width:100%;}
+.cover-card .frame-block{position:absolute;inset:0;transform:translate(-16px,16px);border:1px solid var(--gold);}
+.cover-card img{position:relative;width:100%;display:block;border:1px solid var(--line);box-shadow:0 40px 80px -30px rgba(0,0,0,.7);}
+.side-meta{margin-top:36px;}
+.side-meta dl{display:grid;grid-template-columns:auto 1fr;gap:14px 24px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;}
+.side-meta dt{color:var(--text-3);}
+.side-meta dd{color:var(--cream);}
+
+/* ---------- book page ---------- */
+.book-hero{padding:80px 0;border-bottom:1px solid var(--line-2);position:relative;overflow:hidden;}
+.book-hero .frame{display:grid;grid-template-columns:.85fr 1.15fr;gap:72px;align-items:center;}
+.book-cover-wrap{position:relative;justify-self:center;width:100%;max-width:380px;}
+.book-cover-wrap .frame-block{position:absolute;inset:0;transform:translate(20px,20px);border:1px solid var(--gold);}
+.book-cover-wrap img{position:relative;width:100%;display:block;box-shadow:0 50px 100px -30px rgba(0,0,0,.8);border:1px solid var(--line);}
+.book-hero .bh-kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:24px;}
+.book-hero h1{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;line-height:.86;letter-spacing:-.03em;color:var(--cream);}
+.book-hero h1 .l1{display:block;font-size:clamp(40px,6vw,84px);}
+.book-hero h1 .l2{display:block;font-size:clamp(52px,8vw,116px);color:var(--gold);}
+.book-hero .bh-sub{font-family:'Fraunces',serif;font-style:italic;font-size:clamp(18px,2vw,24px);color:var(--text-2);margin-top:26px;}
+.book-hero .bh-actions{margin-top:36px;display:flex;gap:16px;flex-wrap:wrap;}
+.book-quote{padding:72px 0;border-bottom:1px solid var(--line-2);text-align:center;}
+.book-quote blockquote{font-family:'Fraunces',serif;font-style:italic;font-weight:400;font-size:clamp(26px,3.6vw,46px);line-height:1.25;color:var(--cream);max-width:18ch;margin:0 auto;}
+.book-quote blockquote .mk{color:var(--gold);}
+.book-body{padding:88px 0;}
+.book-body .frame{display:grid;grid-template-columns:1.3fr .7fr;gap:80px;align-items:start;}
+.book-body h2{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(28px,3.4vw,44px);line-height:.98;letter-spacing:-.02em;color:var(--cream);margin-bottom:30px;}
+.book-body h2 em{font-style:normal;color:var(--gold);}
+.book-body p{font-size:17px;line-height:1.78;color:var(--text-2);margin-bottom:20px;max-width:60ch;}
+.book-body p strong{color:var(--cream);font-weight:600;}
+.book-body .lead{font-size:20px;color:var(--cream);}
+.chapters{position:sticky;top:96px;}
+.chapters .ch-title{font-family:'Archivo',sans-serif;font-weight:800;text-transform:uppercase;font-size:13px;letter-spacing:.18em;color:var(--gold);padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:8px;}
+.chapters ol{list-style:none;counter-reset:ch;}
+.chapters li{counter-increment:ch;display:flex;gap:18px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line-3);}
+.chapters li::before{content:counter(ch,decimal-leading-zero);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);min-width:26px;}
+.chapters li .name{font-family:'Archivo',sans-serif;font-weight:600;font-size:16px;color:var(--cream);}
+.book-cta{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:80px 0;text-align:center;}
+.book-cta h2{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(32px,5vw,68px);line-height:.94;letter-spacing:-.02em;color:var(--cream);margin-bottom:18px;}
+.book-cta h2 em{font-style:normal;color:var(--gold);}
+.book-cta p{color:var(--text-2);max-width:48ch;margin:0 auto 32px;font-size:17px;}
+.book-cta .actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+.book-dedication{padding:64px 0;text-align:center;}
+.book-dedication p{font-family:'Fraunces',serif;font-style:italic;font-size:20px;color:var(--text-2);}
+
+/* ---------- responsive ---------- */
+@media (max-width:1080px){
+  .hero-grid{grid-template-columns:1fr;gap:48px;}
+  .hero-cover{order:-1;max-width:360px;}
+  .book-teaser .frame{grid-template-columns:1fr;gap:40px;}
+  .book-teaser .bt-cover{max-width:260px;}
+  .book-body .frame{grid-template-columns:1fr;gap:48px;}
+  .chapters{position:static;}
+  .book-hero .frame{grid-template-columns:1fr;gap:44px;}
+  .book-cover-wrap{order:-1;max-width:300px;}
+  .about-grid > .frame{grid-template-columns:1fr;gap:48px;}
+  .about-grid .col-side{position:static;}
+  .cover-card{max-width:420px;}
+  footer .frame{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:680px){
+  .frame{padding:0 22px;}
+  .nav .frame{height:62px;}
+  .nav-links{display:none;}
+  .hero{padding:48px 0 0;}
+  .hero-grid{gap:36px;}
+  .hero-title .l1{font-size:18px;margin-left:.12em;}
+  .hero-title .l2{font-size:clamp(38px,13vw,56px);}
+  .hero-title .l3{font-size:clamp(46px,16vw,72px);}
+  .hero-cover{max-width:100%;padding-right:10px;}
+  .hero-cover .frame-block{transform:translate(10px,10px);}
+  .hero-cover .badge{left:0;top:-12px;font-size:10px;padding:7px 11px;}
+  .hero-king{display:none;}
+  .marquee span{font-size:20px;}
+  .stats .frame{grid-template-columns:1fr 1fr;gap:24px;}
+  .section{padding:64px 0;}
+  .ep{grid-template-columns:72px 1fr 54px;gap:16px;padding:22px 0;}
+  .ep .ep-bignum{font-size:30px;-webkit-text-stroke-width:1px;}
+  .ep .ep-bignum small{font-size:8px;}
+  .ep-meta{display:none;}
+  .ep-play{width:46px;height:46px;}
+  .sub-link{grid-template-columns:32px 1fr auto;gap:14px;}
+  .sub-link .sl-desc{display:none;}
+  .sub-link .sl-name{font-size:18px;}
+  .sub-link:hover{padding-left:10px;padding-right:10px;}
+  .season-group .sg-head{flex-wrap:wrap;gap:14px;}
+  footer .frame{grid-template-columns:1fr;gap:28px;}
+  .book-quote blockquote{max-width:none;}
+}
+`;
+
+// ---------- chess king SVG (nav mark + hero watermark) ----------
+const KING_MARK = `<svg class="mark" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <rect x="0.5" y="0.5" width="33" height="33" rx="2" fill="#0A1628" stroke="#D4AF5A"/>
+  <rect x="16" y="5" width="2" height="6" fill="#D4AF5A"/>
+  <rect x="13.5" y="6.5" width="7" height="2" fill="#D4AF5A"/>
+  <path d="M10 14 L17 10 L24 14 L22.5 17 L11.5 17 Z" fill="#D4AF5A"/>
+  <path d="M12 17 L22 17 L21 20.5 L13 20.5 Z" fill="#D4AF5A"/>
+  <path d="M12 20.5 L22 20.5 L21.3 26 L12.7 26 Z" fill="#D4AF5A"/>
+  <rect x="9.5" y="26" width="15" height="3" fill="#D4AF5A"/>
+</svg>`;
+
+const KING_WATERMARK = `<svg class="hero-king" viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <rect x="94" y="14" width="12" height="44" fill="currentColor"/>
+  <rect x="76" y="28" width="48" height="12" fill="currentColor"/>
+  <path d="M30 96 L100 50 L170 96 L156 128 L44 128 Z" fill="currentColor"/>
+  <path d="M48 128 L152 128 L144 168 L56 168 Z" fill="currentColor"/>
+  <path d="M52 168 L148 168 L142 244 L58 244 Z" fill="currentColor"/>
+  <rect x="38" y="244" width="124" height="22" fill="currentColor"/>
+  <path d="M44 266 L156 266 L150 300 L50 300 Z" fill="currentColor"/>
+  <rect x="28" y="300" width="144" height="20" fill="currentColor"/>
+</svg>`;
+
+// ---------- shared chunks ----------
+const navBlock = (active) => `
+<header class="nav">
+  <div class="frame">
+    <a class="brand" href="index.html">
+      ${KING_MARK}
+      <span class="lockup">THE MANAGER'S <span class="g">MATRIX</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html#archive"${active==='episodes'?' aria-current="page"':''}>Episodes</a>
+      <a href="about.html"${active==='about'?' aria-current="page"':''}>About</a>
+      <a href="book.html"${active==='book'?' aria-current="page"':''}>The Book</a>
+      <a href="index.html#subscribe">Subscribe</a>
+    </nav>
+    <a class="nav-cta" href="index.html#latest">Listen</a>
+  </div>
+</header>`;
+
+const subscribeBlock = `
+<section class="section subscribe" id="subscribe">
+  <div class="frame">
+    <div class="section-head reveal">
+      <div class="title">${C.subscribe.heading}</div>
+      <div class="num-label">${esc(C.subscribe.note)}</div>
+    </div>
+    <div class="sub-list">
+      ${C.subscribe.links.map((l, i) => `<a href="${esc(l.url)}" class="sub-link reveal" target="_blank" rel="noopener">
+        <span class="sl-num">${String(i+1).padStart(2,'0')}</span><span class="sl-name">${esc(l.name)}</span>
+        <span class="sl-desc">${esc(l.desc)}</span><span class="sl-arrow">${esc(l.action)}</span>
+      </a>`).join('\n      ')}
+    </div>
+  </div>
+</section>`;
+
+const footerBlock = `
+<footer>
+  <div class="frame">
+    <div class="ft-brand">
+      <div class="ft-mark">${KING_MARK}<span class="lockup">THE MANAGER'S <span class="g">MATRIX</span></span></div>
+      <p>${esc(C.footer.brand)}</p>
+    </div>
+    <div class="col">
+      <div class="col-title">Listen</div>
+      <p><a href="index.html#subscribe">Apple Podcasts</a></p>
+      <p><a href="index.html#subscribe">Spotify</a></p>
+      <p><a href="https://anchor.fm/s/1040d3630/podcast/rss" target="_blank" rel="noopener">RSS feed</a></p>
+    </div>
+    <div class="col">
+      <div class="col-title">Explore</div>
+      <p><a href="index.html#archive">All episodes</a></p>
+      <p><a href="about.html">About the show</a></p>
+      <p><a href="book.html">The book</a></p>
+    </div>
+    <div class="col">
+      <div class="col-title">Contact</div>
+      <p><a href="mailto:bernhard@grohs.org">bernhard@grohs.org</a></p>
+      <p>© 2026 Bernhard Grohs</p>
+    </div>
+  </div>
+</footer>`;
+
+const headBlock = (title, description, ogImage) => `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>${esc(title)}</title>
+<meta name="description" content="${esc(description)}"/>
+<meta property="og:title" content="${esc(title)}"/>
+<meta property="og:description" content="${esc(description)}"/>
+<meta property="og:type" content="website"/>
+<meta property="og:image" content="${esc(ogImage || 'assets/podcast-cover.jpg')}"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'><rect width='34' height='34' rx='2' fill='%230A1628'/><rect x='0.5' y='0.5' width='33' height='33' rx='2' fill='none' stroke='%23D4AF5A'/><rect x='16' y='5' width='2' height='6' fill='%23D4AF5A'/><rect x='13.5' y='6.5' width='7' height='2' fill='%23D4AF5A'/><path d='M10 14 L17 10 L24 14 L22.5 17 L11.5 17 Z' fill='%23D4AF5A'/><path d='M12 17 L22 17 L21 20.5 L13 20.5 Z' fill='%23D4AF5A'/><path d='M12 20.5 L22 20.5 L21.3 26 L12.7 26 Z' fill='%23D4AF5A'/><rect x='9.5' y='26' width='15' height='3' fill='%23D4AF5A'/></svg>`)}"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>${CSS}</style>
+</head>
+<body>
+`;
+
+// ---------- runtime JS (audio + RSS refresh + reveal observer) ----------
+const RUNTIME_JS = `
+<script>
+(function(){
+  const FEED_URL = 'https://anchor.fm/s/1040d3630/podcast/rss';
+  let currentRow = null, currentAudio = null;
+  const esc = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const padEp = (n) => n ? String(n).padStart(3,'0') : '-';
+  const deDash = (s) => String(s||'').replace(/\\s*\\u2014\\s*/g, ', ');
+  const MON = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const MON_LC = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const fmtDate = (iso) => { if(!iso) return ''; const d=new Date(iso); if(isNaN(d))return ''; return MON[d.getMonth()]+' '+String(d.getDate()).padStart(2,'0')+', '+d.getFullYear(); };
+  const fmtMonthYear = (d) => MON_LC[d.getMonth()] + ' ' + d.getFullYear();
+  const fmtDur = (d) => { if(!d) return ''; const p=d.split(':').map(s=>parseInt(s,10)); if(p.length===3){const h=p[0],m=p[1],s=p[2]; return h===0 ? m+':'+String(s).padStart(2,'0') : h+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');} return d; };
+  const cleanDesc = (raw) => !raw ? '' : raw.replace(/\\s*Article Reference:\\s*https?:\\/\\/\\S+\\s*/gi,'').replace(/\\s+/g,' ').trim();
+  // CDATA descriptions carry HTML tags + encoded entities; parse as HTML to get clean text.
+  const htmlToText = (html) => { try { const d=new DOMParser().parseFromString(html||'','text/html'); return (d.body.textContent||'').replace(/\\s+/g,' ').trim(); } catch(e){ return (html||'').replace(/<[^>]+>/g,' ').replace(/\\s+/g,' ').trim(); } };
+  const seasonRoman = (n) => ({'1':'I','2':'II','3':'III','4':'IV','5':'V'}[String(n)] || String(n));
+  const fmtTime = (s) => { if(!isFinite(s)||s<0) return '00:00'; return String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0'); };
+  const totalMinutes = (eps) => eps.reduce((sum,e)=>{ if(!e.duration) return sum; const p=e.duration.split(':').map(Number); return sum+(p.length===3?p[0]*60+p[1]:p[0]); },0);
+
+  function stopCurrent(){ if(currentAudio) currentAudio.pause(); if(currentRow){ currentRow.classList.remove('is-open','is-playing'); const b=currentRow.querySelector('.ep-play'); if(b) b.classList.remove('playing'); } currentRow=null; currentAudio=null; }
+  function wireAudio(){
+    document.querySelectorAll('.ep').forEach((row) => {
+      const btn = row.querySelector('.ep-play'); if(!btn || btn.dataset.wired) return; btn.dataset.wired='1';
+      const src=row.dataset.audio, fill=row.querySelector('.scrub-fill'), time=row.querySelector('.ep-player .time'), scrub=row.querySelector('.scrub');
+      let audio=null;
+      const ensureAudio=()=>{ if(audio) return audio; audio=new Audio(); audio.preload='none'; audio.src=src;
+        audio.addEventListener('timeupdate',()=>{ if(audio.duration&&isFinite(audio.duration)&&fill) fill.style.width=(audio.currentTime/audio.duration*100)+'%'; if(time) time.textContent=fmtTime(audio.currentTime); });
+        audio.addEventListener('ended',()=>{ row.classList.remove('is-playing'); btn.classList.remove('playing'); });
+        audio.addEventListener('error',()=>{ if(time) time.textContent='ERROR'; }); return audio; };
+      btn.addEventListener('click',(e)=>{ e.preventDefault();
+        if(currentRow===row && currentAudio && !currentAudio.paused){ currentAudio.pause(); row.classList.remove('is-playing'); btn.classList.remove('playing'); return; }
+        if(currentRow && currentRow!==row) stopCurrent();
+        const a=ensureAudio(); row.classList.add('is-open','is-playing'); btn.classList.add('playing'); a.play().catch(()=>{}); currentRow=row; currentAudio=a; });
+      if(scrub) scrub.addEventListener('click',(e)=>{ if(!audio||!audio.duration||!isFinite(audio.duration)) return; const r=scrub.getBoundingClientRect(); const pct=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)); audio.currentTime=pct*audio.duration; });
+    });
+  }
+  function wireSeasonPicker(){
+    const sel=document.getElementById('seasonSelect'); if(!sel||sel.dataset.wired) return; sel.dataset.wired='1';
+    sel.addEventListener('change',()=>{ const v=sel.value; document.querySelectorAll('.season-group').forEach(g=>g.classList.toggle('is-active',g.dataset.season===v)); stopCurrent(); });
+  }
+  function wireLatestCta(){
+    const cta=document.getElementById('latestPlay'); if(!cta||cta.dataset.wired) return; cta.dataset.wired='1';
+    cta.addEventListener('click',(e)=>{ e.preventDefault(); const first=document.querySelector('.season-group.is-active .ep')||document.querySelector('.ep'); if(!first) return; first.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(()=>{ const b=first.querySelector('.ep-play'); if(b&&!b.classList.contains('playing')) b.click(); },500); });
+  }
+  // scroll reveal
+  let io=null;
+  function wireReveal(){
+    if(!('IntersectionObserver' in window)){ document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in')); return; }
+    if(!io) io=new IntersectionObserver((entries)=>{ entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target);} }); },{rootMargin:'0px 0px -8% 0px',threshold:.08});
+    document.querySelectorAll('.reveal:not(.in)').forEach(el=>io.observe(el));
+  }
+
+  function parseFeed(xmlText){
+    const doc=new DOMParser().parseFromString(xmlText,'application/xml'); if(doc.querySelector('parsererror')) return null;
+    const ITUNES='http://www.itunes.com/dtds/podcast-1.0.dtd';
+    const items=Array.from(doc.querySelectorAll('item'));
+    const get=(it,tag)=>{ const el=it.querySelector(tag); return el?(el.textContent||'').trim():''; };
+    const getNS=(it,tag)=>{ const el=it.getElementsByTagNameNS(ITUNES,tag)[0]; return el?(el.textContent||'').trim():''; };
+    const eps=items.map((it)=>{ const titleRaw=get(it,'title'); const nm=titleRaw.match(/^#?\\s*(\\d+)\\s*[-–:]?\\s*(.*)$/); const num=nm?parseInt(nm[1],10):null; const title=nm?nm[2].trim():titleRaw; const enc=it.querySelector('enclosure');
+      return { num, title: deDash(title), description: deDash(htmlToText(get(it,'description'))), pubDate:get(it,'pubDate'), duration:getNS(it,'duration'), season:getNS(it,'season'), audio:enc?(enc.getAttribute('url')||''):'' }; });
+    eps.sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate)); return eps;
+  }
+  function groupBySeason(eps){
+    const tagged=eps.filter(e=>e.season); const ranges={};
+    tagged.forEach(e=>{ const t=new Date(e.pubDate).getTime(); if(!ranges[e.season]) ranges[e.season]={min:t,max:t}; ranges[e.season].min=Math.min(ranges[e.season].min,t); ranges[e.season].max=Math.max(ranges[e.season].max,t); });
+    const assign=(e)=>{ if(e.season) return e.season; const t=new Date(e.pubDate).getTime(); let best=null,bestDist=Infinity; Object.entries(ranges).forEach(([s,r])=>{ if(t>=r.min&&t<=r.max){best=s;bestDist=-1;return;} const d=Math.min(Math.abs(t-r.min),Math.abs(t-r.max)); if(d<bestDist){bestDist=d;best=s;} }); return best||'1'; };
+    const g={}; eps.forEach(e=>{ const s=assign(e); (g[s]=g[s]||[]).push(e); }); return g;
+  }
+  function renderEp(e){
+    const desc=cleanDesc(e.description);
+    return '<article class="ep reveal" data-audio="'+esc(e.audio)+'">'
+      + '<div class="ep-bignum"><small>EP</small>'+padEp(e.num)+'</div>'
+      + '<div class="ep-body"><h3 class="ep-title">'+esc(e.title)+'</h3><p class="ep-desc">'+esc(desc)+'</p></div>'
+      + '<div class="ep-meta"><span class="dur">'+esc(fmtDur(e.duration))+'</span><span>'+esc(fmtDate(e.pubDate))+'</span></div>'
+      + '<button class="ep-play" aria-label="Play episode '+padEp(e.num)+': '+esc(e.title)+'"><span class="ic-play"></span><span class="ic-pause"></span></button>'
+      + '<div class="ep-player"><div class="scrub"><div class="scrub-fill"></div></div><div class="time">00:00</div></div>'
+      + '</article>';
+  }
+  function renderSeasonGroup(s,eps,isActive){
+    const tm=totalMinutes(eps); const h=Math.floor(tm/60),m=tm%60; const totalLabel=h>0?(h+'h '+m+'m'):(m+'m');
+    const dates=eps.map(e=>new Date(e.pubDate)).sort((a,b)=>a-b); const dateRange=fmtMonthYear(dates[0])+' → '+fmtMonthYear(dates[dates.length-1]);
+    return '<div class="season-group'+(isActive?' is-active':'')+'" data-season="'+esc(s)+'">'
+      + '<div class="sg-head"><div class="sg-num"><small>SEASON</small>'+seasonRoman(s)+'</div>'
+      + '<div class="sg-meta"><div><span class="strong">'+eps.length+' episodes</span> · '+esc(totalLabel)+' total</div><div>'+esc(dateRange)+'</div></div></div>'
+      + eps.map(renderEp).join('') + '</div>';
+  }
+  function applyEpisodes(eps){
+    if(!eps||!eps.length) return;
+    const grouped=groupBySeason(eps); const keys=Object.keys(grouped).sort((a,b)=>Number(b)-Number(a)); const defaultSeason=keys[0];
+    const sel=document.getElementById('seasonSelect');
+    if(sel) sel.innerHTML=keys.map(s=>'<option value="'+esc(s)+'"'+(s===defaultSeason?' selected':'')+'>Season '+seasonRoman(s)+' · '+grouped[s].length+' episodes</option>').join('');
+    const host=document.getElementById('seasonGroups');
+    if(host){ host.innerHTML=keys.map(s=>renderSeasonGroup(s,grouped[s],s===defaultSeason)).join(''); }
+    const total=eps.length; const tm=totalMinutes(eps); const totalHours=Math.round(tm/60); const avgMin=Math.round(tm/total);
+    const setNum=(id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
+    setNum('statEpisodes',String(total)); setNum('statHours','~'+totalHours+'h'); setNum('statAvg','~'+avgMin+'m');
+    const hk=document.getElementById('heroKickerCount'); if(hk) hk.textContent=total+' Episodes · ~'+totalHours+'h';
+    const latest=eps[0];
+    const le=document.getElementById('latestEyebrow'); const lt=document.getElementById('latestTitle'); const lm=document.getElementById('latestMeta');
+    if(le) le.textContent='▸ Latest · Episode '+padEp(latest.num);
+    if(lt) lt.textContent=latest.title;
+    if(lm) lm.textContent=fmtDur(latest.duration)+' · '+fmtDate(latest.pubDate);
+    wireAudio(); wireSeasonPicker(); wireReveal();
+  }
+  async function refreshFromRss(){
+    try{ const res=await fetch(FEED_URL,{cache:'no-cache'}); if(!res.ok) return; const xml=await res.text(); const eps=parseFeed(xml);
+      if(eps&&eps.length){ applyEpisodes(eps);
+        let stamp=document.getElementById('rssStamp');
+        if(!stamp){ const ftBrand=document.querySelector('footer .ft-brand'); if(ftBrand){ stamp=document.createElement('p'); stamp.id='rssStamp'; stamp.style.cssText='margin-top:14px;font-size:10px;letter-spacing:.08em;color:var(--gold);text-transform:uppercase;font-family:JetBrains Mono,monospace;'; ftBrand.appendChild(stamp); } }
+        if(stamp){ const now=new Date(); stamp.textContent='● Live from RSS · synced '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'); }
+      }
+    }catch(err){ console.warn("[Manager's Matrix] RSS refresh failed:",err); }
+  }
+  document.addEventListener('DOMContentLoaded',()=>{ wireAudio(); wireSeasonPicker(); wireLatestCta(); wireReveal(); refreshFromRss(); });
+})();
+</script>
+`;
+
+// ---------- build-time season grouping ----------
+const tagged = data.episodes.filter(e => e.season);
+const seasonRanges = {};
+tagged.forEach(e => { const s=e.season, t=new Date(e.pubDate).getTime(); if(!seasonRanges[s]) seasonRanges[s]={min:t,max:t}; seasonRanges[s].min=Math.min(seasonRanges[s].min,t); seasonRanges[s].max=Math.max(seasonRanges[s].max,t); });
+const assignSeason = (e) => { if(e.season) return e.season; const t=new Date(e.pubDate).getTime(); let best=null,bestDist=Infinity; Object.entries(seasonRanges).forEach(([s,r])=>{ if(t>=r.min&&t<=r.max){best=s;bestDist=-1;return;} const dist=Math.min(Math.abs(t-r.min),Math.abs(t-r.max)); if(dist<bestDist){bestDist=dist;best=s;} }); return best||'1'; };
+const grouped = {};
+data.episodes.forEach(e => { const s=assignSeason(e); (grouped[s]=grouped[s]||[]).push(e); });
+const seasonKeys = Object.keys(grouped).sort((a,b)=>Number(b)-Number(a));
+const defaultSeason = seasonKeys[0];
+const seasonMonthYear = (eps) => { const dates=eps.map(e=>new Date(e.pubDate)).sort((a,b)=>a-b); const f=(d)=>{ const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return `${M[d.getMonth()]} ${d.getFullYear()}`; }; return `${f(dates[0])} → ${f(dates[dates.length-1])}`; };
+
+const renderEp = (e) => {
+  const desc = deDash(cleanDesc(e.description));
+  return `
+    <article class="ep reveal" data-audio="${esc(e.audio)}">
+      <div class="ep-bignum"><small>EP</small>${padEp(e.num)}</div>
+      <div class="ep-body">
+        <h3 class="ep-title">${esc(deDash(e.title))}</h3>
+        <p class="ep-desc">${esc(desc)}</p>
+      </div>
+      <div class="ep-meta"><span class="dur">${esc(fmtDur(e.duration))}</span><span>${esc(fmtDate(e.pubDate))}</span></div>
+      <button class="ep-play" aria-label="Play episode ${padEp(e.num)}: ${esc(e.title)}"><span class="ic-play"></span><span class="ic-pause"></span></button>
+      <div class="ep-player"><div class="scrub"><div class="scrub-fill"></div></div><div class="time">00:00</div></div>
+    </article>`;
+};
+const seasonGroupsHtml = seasonKeys.map(s => {
+  const eps = grouped[s];
+  const totalMin = eps.reduce((sum,e)=>{ if(!e.duration) return sum; const p=e.duration.split(':').map(Number); return sum+(p.length===3?p[0]*60+p[1]:p[0]); },0);
+  const hours=Math.floor(totalMin/60), mins=totalMin%60; const totalLabel=hours>0?`${hours}h ${mins}m`:`${mins}m`;
+  return `
+  <div class="season-group${s===defaultSeason?' is-active':''}" data-season="${esc(s)}">
+    <div class="sg-head">
+      <div class="sg-num"><small>SEASON</small>${roman(s)}</div>
+      <div class="sg-meta"><div><span class="strong">${eps.length} episodes</span> · ${esc(totalLabel)} total</div><div>${esc(seasonMonthYear(eps))}</div></div>
+    </div>
+    ${eps.map(renderEp).join('\n')}
+  </div>`;
+}).join('\n');
+const seasonOptions = seasonKeys.map(s => `<option value="${esc(s)}"${s===defaultSeason?' selected':''}>Season ${roman(s)} · ${grouped[s].length} episodes</option>`).join('');
+
+const latest = data.episodes[0];
+const totalMins = data.episodes.reduce((sum,e)=>{ if(!e.duration) return sum; const p=e.duration.split(':').map(Number); return sum+(p.length===3?p[0]*60+p[1]:p[0]); },0);
+const totalHours = Math.round(totalMins/60);
+const avgMin = Math.round(totalMins/data.episodes.length);
+
+// marquee content (doubled for seamless loop) - alternating solid / hollow words
+const marqUnit = C.marquee.map((w, i) =>
+  `<span class="${i % 2 ? 'hollow' : ''}">${esc(w)}</span><span class="star">✦</span>`
+).join('');
+
+// ---------- index.html ----------
+const indexHtml = headBlock(
+  "The Manager's Matrix | A leadership podcast by Bernhard Grohs",
+  deDash(data.channel.description)
+) + `
+${navBlock('episodes')}
+
+<main>
+
+<section class="hero">
+  ${KING_WATERMARK}
+  <div class="frame">
+    <div class="hero-grid">
+      <div class="hero-copy reveal">
+        <div class="hero-kicker">
+          <span class="tag">● ${esc(C.hero.kicker)}</span>
+          <span class="dim" id="heroKickerCount">${data.episodes.length} Episodes · ~${totalHours}h</span>
+        </div>
+        <h1 class="hero-title">
+          <span class="l1">THE</span>
+          <span class="l2">MANAGER'S</span>
+          <span class="l3">MATRIX</span>
+        </h1>
+        <p class="hero-sub">${C.hero.sub}</p>
+        <div class="hero-actions">
+          <a href="#latest" class="btn-gold" id="latestPlay"><span class="tri"></span>${esc(C.hero.playLabel)}</a>
+          <a href="#archive" class="btn-ghost">${esc(C.hero.browseLabel)}</a>
+        </div>
+      </div>
+      <div class="hero-cover reveal">
+        <span class="badge">${esc(C.hero.coverBadge)}</span>
+        <div class="frame-block"></div>
+        <img src="assets/podcast-cover.jpg" alt="The Manager's Matrix podcast cover" loading="eager"/>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track">${marqUnit}${marqUnit}</div>
+</div>
+
+<section class="stats">
+  <div class="frame">
+    <div class="stat reveal"><div class="num" id="statEpisodes">${data.episodes.length}</div><div class="lbl">Episodes</div></div>
+    <div class="stat reveal"><div class="num" id="statHours">~${totalHours}h</div><div class="lbl">Listening time</div></div>
+    <div class="stat reveal"><div class="num">${esc(C.stats.newDrops)}</div><div class="lbl">New drops</div></div>
+    <div class="stat reveal"><div class="num" id="statAvg">~${avgMin}m</div><div class="lbl">Avg length</div></div>
+  </div>
+</section>
+
+<section class="section" id="archive">
+  <div class="frame">
+    <div class="section-head reveal">
+      <div class="title">${C.archiveHeading}</div>
+      <div class="season-picker">
+        <span class="picker-label">Season</span>
+        <span class="season-select">
+          <select id="seasonSelect" aria-label="Choose a season">${seasonOptions}</select>
+          <span class="chev"></span>
+        </span>
+      </div>
+    </div>
+    <div id="latest"></div>
+    <div id="seasonGroups">
+      ${seasonGroupsHtml}
+    </div>
+  </div>
+</section>
+
+<section class="book-teaser">
+  <div class="frame">
+    <div class="bt-cover reveal">
+      <div class="frame-block"></div>
+      <img src="assets/book-cover.jpg" alt="The Manager's Matrix book cover"/>
+    </div>
+    <div class="bt-copy reveal">
+      <div class="bt-kicker">● ${esc(C.bookTeaser.kicker)}</div>
+      <h2>${C.bookTeaser.heading}</h2>
+      <p class="bt-quote">“${esc(C.bookTeaser.quote)}”</p>
+      <div class="hero-actions">
+        <a href="book.html" class="btn-gold">${esc(C.bookTeaser.cta)}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+${subscribeBlock}
+
+</main>
+
+${footerBlock}
+${RUNTIME_JS}
+</body>
+</html>
+`;
+
+// ---------- about.html ----------
+const aboutMetaHtml = C.about.meta.map(([k, v]) =>
+  `<dt>${esc(k)}</dt><dd>${esc(tokens(v))}</dd>`
+).join('\n          ');
+const aboutSection = (s) =>
+  `<h3${s.id ? ` id="${esc(s.id)}"` : ''}>${esc(s.h3)}</h3>\n      ` +
+  s.p.map(par => `<p>${par}</p>`).join('\n      ');
+// pull-quote sits after the first section (the premise)
+const aboutMainHtml = [
+  `<h2>${C.about.heading}</h2>`,
+  aboutSection(C.about.sections[0]),
+  `<p class="pull-quote">${esc(C.about.pullQuote)}</p>`,
+  ...C.about.sections.slice(1).map(aboutSection)
+].join('\n\n      ');
+
+const aboutHtml = headBlock(
+  "About | The Manager's Matrix",
+  "About The Manager's Matrix, a leadership podcast by Bernhard Grohs, narrated by AI voice Björn Grosso."
+) + `
+${navBlock('about')}
+
+<main>
+
+<section class="about-hero">
+  <div class="frame reveal">
+    <div class="hero-kicker"><span class="tag">● ${esc(C.about.kicker)}</span><span class="dim">${esc(C.about.readingTime)}</span></div>
+    <h1 class="hero-title">
+      <span class="l1">ABOUT THE</span>
+      <span class="l3">MATRIX</span>
+    </h1>
+    <p class="hero-sub" style="margin-top:28px;">${C.about.heroSub}</p>
+  </div>
+</section>
+
+<section class="about-grid">
+  <div class="frame">
+    <aside class="col-side reveal">
+      <div class="cover-card">
+        <div class="frame-block"></div>
+        <img src="assets/podcast-cover.jpg" alt="The Manager's Matrix podcast cover"/>
+      </div>
+      <div class="side-meta">
+        <dl>
+          ${aboutMetaHtml}
+        </dl>
+      </div>
+    </aside>
+
+    <div class="col-main reveal">
+      ${aboutMainHtml}
+    </div>
+  </div>
+</section>
+
+${subscribeBlock}
+
+</main>
+
+${footerBlock}
+${RUNTIME_JS}
+</body>
+</html>
+`;
+
+// ---------- book.html ----------
+const chaptersHtml = C.book.chapters.map(c => `<li><span class="name">${esc(c)}</span></li>`).join('\n');
+const bookParasHtml = C.book.paras.map(p => `<p>${p}</p>`).join('\n      ');
+
+const bookHtml = headBlock(
+  "The Book | The Manager's Matrix",
+  "The Manager's Matrix: Leadership in the Age of Change. A business-fiction novel by Bernhard Grohs.",
+  "assets/book-cover.jpg"
+) + `
+${navBlock('book')}
+
+<main>
+
+<section class="book-hero">
+  ${KING_WATERMARK}
+  <div class="frame">
+    <div class="book-cover-wrap reveal">
+      <div class="frame-block"></div>
+      <img src="assets/book-cover.jpg" alt="The Manager's Matrix book cover"/>
+    </div>
+    <div class="bh-copy reveal">
+      <div class="bh-kicker">● ${esc(C.book.kicker)}</div>
+      <h1>
+        <span class="l1">THE MANAGER'S</span>
+        <span class="l2">MATRIX</span>
+      </h1>
+      <p class="bh-sub">${esc(C.book.subtitle)}</p>
+      <div class="bh-actions">
+        <a href="mailto:bernhard@grohs.org?subject=The%20Manager%27s%20Matrix%20-%20Book" class="btn-gold">${esc(C.book.getLabel)}</a>
+        <a href="#inside" class="btn-ghost">${esc(C.book.lookInsideLabel)}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="book-quote">
+  <div class="frame reveal">
+    <blockquote><span class="mk">"</span>${esc(C.book.quote)}<span class="mk">"</span></blockquote>
+  </div>
+</section>
+
+<section class="book-body" id="inside">
+  <div class="frame">
+    <div class="bb-copy reveal">
+      <h2>${C.book.bodyHeading}</h2>
+      <p class="lead">${C.book.lead}</p>
+      ${bookParasHtml}
+    </div>
+    <aside class="chapters reveal">
+      <div class="ch-title">${esc(C.book.contentsLabel)}</div>
+      <ol>${chaptersHtml}</ol>
+    </aside>
+  </div>
+</section>
+
+<section class="book-cta">
+  <div class="frame reveal">
+    <h2>${C.book.ctaHeading}</h2>
+    <p>${esc(C.book.ctaText)}</p>
+    <div class="actions">
+      <a href="mailto:bernhard@grohs.org?subject=The%20Manager%27s%20Matrix%20-%20Book" class="btn-gold">${esc(C.book.orderLabel)}</a>
+      <a href="index.html#archive" class="btn-ghost">${esc(C.book.listenLabel)}</a>
+    </div>
+  </div>
+</section>
+
+<section class="book-dedication">
+  <div class="frame reveal">
+    <p>“${esc(C.book.dedication)}”</p>
+  </div>
+</section>
+
+</main>
+
+${footerBlock}
+${RUNTIME_JS}
+</body>
+</html>
+`;
+
+// ---------- write ----------
+fs.writeFileSync(path.join(ROOT, 'index.html'), indexHtml);
+fs.writeFileSync(path.join(ROOT, 'about.html'), aboutHtml);
+fs.writeFileSync(path.join(ROOT, 'book.html'), bookHtml);
+console.log('Wrote index.html  (' + indexHtml.length + ' bytes)');
+console.log('Wrote about.html  (' + aboutHtml.length + ' bytes)');
+console.log('Wrote book.html   (' + bookHtml.length + ' bytes)');
+console.log('Episodes:', data.episodes.length);
